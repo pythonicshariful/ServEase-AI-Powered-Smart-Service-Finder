@@ -1,13 +1,23 @@
-venv/
-servease.db
+# Python cache
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
-*.pyd
-*.pyw
-*.pyz
-*.pywz
-*.pyzw
-*.pyzwz
-*.pyzwzw
-*.pyzwzwz
+
+# Virtual environments
+venv/
+.venv/
+
+# Flask instance folder (local data, SQLite, uploads)
+instance/
+
+# SQLite databases
+*.db
+*.sqlite3
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+
