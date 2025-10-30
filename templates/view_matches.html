@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h2 class="h4 mb-1">Matches for: {{ post.title }}</h2>
+      <p class="text-muted mb-0">{{ post.description }}</p>
+    </div>
+    <a href="{{ url_for('finder_dashboard') }}" class="btn btn-outline-secondary">Back</a>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h3 class="h5">Top Matches</h3>
+      {% if scored %}
+        <div class="list-group list-group-flush">
+          {% for score, prov in scored %}
+            <div class="list-group-item">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <div class="fw-semibold">{{ prov.user.name }}</div>
+                  <div class="text-muted">{{ prov.title }}</div>
+                  <div class="small mt-1"><span class="text-muted">Skills:</span> {% for s in prov.skills %}{{ s.skill }}{% if not loop.last %}, {% endif %}{% endfor %}</div>
+                </div>
+                <div class="text-end">
+                  <div class="badge bg-primary">Score {{ score }}</div>
+                  {% if prov.verified %}<div class="small text-success">Verified</div>{% endif %}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-muted mb-0">No providers found.</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

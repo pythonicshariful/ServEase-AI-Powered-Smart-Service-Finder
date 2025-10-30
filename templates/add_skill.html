@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h5">Add Skill</h2>
+          <form method="post" class="vstack gap-3 mt-2">
+            {{ form.hidden_tag() }}
+            <div>
+              <label class="form-label">{{ form.skill.label.text }}</label>
+              {{ form.skill(class_='form-control', placeholder='e.g., Plumbing') }}
+            </div>
+            <div>
+              {{ form.submit(class_='btn btn-primary') }}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

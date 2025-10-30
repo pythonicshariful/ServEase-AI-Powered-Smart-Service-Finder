@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h2 class="h4">Provider Profile</h2>
+          <p class="mb-1 text-muted">{{ provider.title or "No title yet" }}</p>
+          <p class="text-muted">{{ provider.description or "No description" }}</p>
+          <span class="badge {{ 'bg-success' if provider.verified else 'bg-secondary' }}">{{ 'Verified' if provider.verified else 'Unverified' }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h2 class="h5 mb-0">Skills</h2>
+            <a class="btn btn-sm btn-outline-primary" href="{{ url_for('add_skill') }}">Add Skill</a>
+          </div>
+          {% if skills %}
+            <ul class="list-group list-group-flush">
+              {% for s in skills %}
+                <li class="list-group-item">{{ s.skill }}</li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="text-muted mb-0">No skills added yet.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h5">Edit Profile</h2>
+          <form method="post" action="{{ url_for('provider_profile') }}" class="vstack gap-3 mt-2">
+            {{ form.hidden_tag() }}
+            <div>
+              <label class="form-label">{{ form.title.label.text }}</label>
+              {{ form.title(class_='form-control', placeholder='e.g., Electrician, Plumber') }}
+            </div>
+            <div>
+              <label class="form-label">{{ form.description.label.text }}</label>
+              {{ form.description(class_='form-control', rows='4', placeholder='Short summary of services, specialization, etc.') }}
+            </div>
+            <div>
+              {{ form.submit(class_='btn btn-primary') }}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

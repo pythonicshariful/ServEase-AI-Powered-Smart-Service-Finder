@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+  <section class="py-5">
+    <div class="row align-items-center">
+      <div class="col-lg-7">
+        <h1 class="display-5 fw-bold">Find trusted service pros in minutes</h1>
+        <p class="lead text-muted mt-3">ServEase matches your needs with verified providers using smart, skill-based scoring.</p>
+        <div class="d-flex gap-2 mt-3">
+          <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">Get Started</a>
+          <a href="{{ url_for('login') }}" class="btn btn-outline-secondary btn-lg">Sign In</a>
+        </div>
+      </div>
+      <div class="col-lg-5 mt-4 mt-lg-0">
+        <div class="card shadow-sm border-0">
+          <div class="card-body p-4">
+            <h2 class="h5">How it works</h2>
+            <ol class="mb-0 mt-2">
+              <li>Create an account as a Finder or Provider</li>
+              <li>Post a job or add your skills</li>
+              <li>Get instant matches powered by smart scoring</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

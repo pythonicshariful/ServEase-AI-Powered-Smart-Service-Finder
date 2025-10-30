@@ -1,0 +1,24 @@
+/* Subtle global polish on top of Bootstrap */
+:root {
+  --se-gradient: linear-gradient(135deg, #6f42c1 0%, #0d6efd 100%);
+}
+
+/* Hero heading emphasis */
+.display-5.fw-bold {
+  background: var(--se-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Card hover lift */
+.card {
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,.1) !important;
+}
+
+/* Footer */
+footer { background: #fff; }
