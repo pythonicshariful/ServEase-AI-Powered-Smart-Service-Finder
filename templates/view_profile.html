@@ -1,0 +1,302 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="profile-container">
+    <!-- Cover Image Section -->
+    <div class="cover-image-container">
+        {% if user.cover_image %}
+            <img src="{{ url_for('static', filename=user.cover_image) }}" alt="Cover Image" class="cover-image">
+        {% else %}
+            <div class="default-cover"></div>
+        {% endif %}
+        
+        <!-- Profile Image Overlay -->
+        <div class="profile-image-overlay">
+            {% if user.profile_image %}
+                <img src="{{ url_for('static', filename=user.profile_image) }}" alt="Profile Image" class="profile-image">
+            {% else %}
+                <div class="default-profile-image">
+                    {{ user.name[0].upper() }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Main Profile Content -->
+    <div class="container profile-content">
+        <div class="row">
+            <!-- Left Column - Basic Info -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="profile-name">{{ user.name }}</h2>
+                        {% if user.tagline %}
+                            <p class="profile-tagline">{{ user.tagline }}</p>
+                        {% endif %}
+                        
+                        <div class="profile-meta">
+                            {% if user.location %}
+                                <p class="meta-item">
+                                    <i class="fas fa-map-marker-alt"></i> {{ user.location }}
+                                </p>
+                            {% endif %}
+                            {% if user.phone %}
+                                <p class="meta-item">
+                                    <i class="fas fa-phone"></i> {{ user.phone }}
+                                </p>
+                            {% endif %}
+                            {% if user.website %}
+                                <p class="meta-item">
+                                    <i class="fas fa-globe"></i> 
+                                    <a href="{{ user.website }}" target="_blank">Website</a>
+                                </p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Social Links -->
+                        {% set social = social if social is defined else {} %}
+                        {% if social %}
+                            <div class="social-links">
+                                {% if social.get('facebook') %}
+                                    <a href="{{ social.get('facebook') }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                                        <i class="fab fa-facebook"></i>
+                                    </a>
+                                {% endif %}
+                                {% if social.get('twitter') %}
+                                    <a href="{{ social.get('twitter') }}" class="btn btn-outline-info btn-sm" target="_blank">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                {% endif %}
+                                {% if social.get('linkedin') %}
+                                    <a href="{{ social.get('linkedin') }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% if current_user.id == user.id %}
+                            <div class="mt-3">
+                                <a href="{{ url_for('user_profile') }}" class="btn btn-primary w-100">
+                                    <i class="fas fa-edit"></i> Edit Profile
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Role Specific Content -->
+            <div class="col-md-8">
+                {% if user.role == 'provider' %}
+                    <!-- Provider Specific Content -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="card-title">Professional Info</h3>
+                                {% if user.provider.verified %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check-circle"></i> Verified
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            {% if user.provider.title %}
+                                <h4 class="text-primary">{{ user.provider.title }}</h4>
+                            {% endif %}
+
+                            {% if user.provider.business_name %}
+                                <p class="text-muted mb-3">{{ user.provider.business_name }}</p>
+                            {% endif %}
+
+                            {% if user.provider.description %}
+                                <div class="mb-4">
+                                    <h5>About</h5>
+                                    <p>{{ user.provider.description }}</p>
+                                </div>
+                            {% endif %}
+
+                            <!-- Professional Details -->
+                            <div class="row mb-4">
+                                {% if user.provider.experience_years %}
+                                    <div class="col-md-4">
+                                        <div class="stat-box">
+                                            <i class="fas fa-clock"></i>
+                                            <h4>{{ user.provider.experience_years }}</h4>
+                                            <p>Years Experience</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if user.provider.rating %}
+                                    <div class="col-md-4">
+                                        <div class="stat-box">
+                                            <i class="fas fa-star text-warning"></i>
+                                            <h4>{{ "%.1f"|format(user.provider.rating) }}</h4>
+                                            <p>Rating</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if user.provider.hourly_rate %}
+                                    <div class="col-md-4">
+                                        <div class="stat-box">
+                                            <i class="fas fa-money-bill-wave"></i>
+                                            <h4>{{ user.provider.hourly_rate }} BDT</h4>
+                                            <p>Per Hour</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Skills Section -->
+                            {% if skills %}
+                                <div class="mb-4">
+                                    <h5>Skills & Expertise</h5>
+                                    <div class="skills-container">
+                                        {% for skill in skills %}
+                                            <div class="skill-badge">
+                                                {{ skill.skill }}
+                                                {% if skill.proficiency %}
+                                                    <span class="proficiency {{ skill.proficiency }}">
+                                                        {{ skill.proficiency }}
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            <!-- Portfolio Section -->
+                            {% if portfolio_images %}
+                                <div class="mb-4">
+                                    <h5>Portfolio</h5>
+                                    <div class="portfolio-grid">
+                                        {% for image in portfolio_images %}
+                                            <div class="portfolio-item">
+                                                <img src="{{ url_for('static', filename=image) }}" alt="Portfolio Image" 
+                                                     class="img-fluid" data-bs-toggle="modal" 
+                                                     data-bs-target="#portfolioModal">
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            <!-- Business Hours -->
+                            {% if user.provider.business_hours %}
+                                <div class="mb-4">
+                                    <h5>Business Hours</h5>
+                                    <div class="business-hours">
+                                        {% set hours = user.provider.business_hours|fromjson %}
+                                        {% for day, time in hours.items() %}
+                                            <div class="hour-row">
+                                                <span class="day">{{ day }}</span>
+                                                <span class="time">{{ time }}</span>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                {% else %}
+                    <!-- Finder Specific Content -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <h3 class="card-title mb-4">About</h3>
+                            
+                            {% if user.finder.company_name %}
+                                <div class="company-info mb-4">
+                                    <h4 class="text-primary">{{ user.finder.company_name }}</h4>
+                                    {% if user.finder.industry %}
+                                        <p class="text-muted">{{ user.finder.industry }}</p>
+                                    {% endif %}
+                                    {% if user.finder.company_size %}
+                                        <p class="company-size">
+                                            <i class="fas fa-users"></i> {{ user.finder.company_size }} employees
+                                        </p>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+
+                            {% if user.finder.bio %}
+                                <div class="mb-4">
+                                    <p>{{ user.finder.bio }}</p>
+                                </div>
+                            {% endif %}
+
+                            <!-- Service Preferences -->
+                            {% if user.finder.preferences %}
+                                <div class="mb-4">
+                                    <h5>Service Preferences</h5>
+                                    <div class="preferences-container">
+                                        {% set prefs = user.finder.preferences|fromjson %}
+                                        {% for pref in prefs %}
+                                            <div class="preference-badge">
+                                                {{ pref }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {% if current_user.id == user.id %}
+                                <!-- Recent Activity -->
+                                <div class="mb-4">
+                                    <h5>Recent Posts</h5>
+                                    <div class="recent-posts">
+                                        {% for post in posts %}
+                                            <div class="post-card">
+                                                <h6>{{ post.title }}</h6>
+                                                <p class="text-muted">Posted {{ post.created_at|timeago }}</p>
+                                                <div class="post-status {{ post.status }}">
+                                                    {{ post.status|title }}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Portfolio Modal -->
+<div class="modal fade" id="portfolioModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <button type="button" class="btn-close position-absolute top-0 end-0 m-2" data-bs-dismiss="modal"></button>
+                <img src="" class="img-fluid" id="portfolioModalImage">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Portfolio image modal
+    const portfolioModal = document.getElementById('portfolioModal');
+    const portfolioModalImage = document.getElementById('portfolioModalImage');
+    
+    document.querySelectorAll('.portfolio-item img').forEach(img => {
+        img.addEventListener('click', function() {
+            portfolioModalImage.src = this.src;
+        });
+    });
+
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+{% endblock %}

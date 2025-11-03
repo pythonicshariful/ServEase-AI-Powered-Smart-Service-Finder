@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 mb-0">Best Matched Jobs for You</h2>
+    <div>
+      <a href="{{ url_for('provider_dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+    </div>
+  </div>
+
+  <div class="alert alert-info" role="alert">
+    <strong>AI-Powered Matching:</strong> These jobs are matched using Google Gemini AI based on your skills, expertise, and profile.
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h3 class="h5">Your Profile</h3>
+      <p class="mb-1"><strong>{{ provider.title or 'No title set' }}</strong></p>
+      <p class="text-muted">{{ provider.description or 'No description' }}</p>
+      {% if provider.location %}
+        <p class="text-muted small mb-0"><strong>Location:</strong> {{ provider.location }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card shadow-sm mt-3">
+    <div class="card-body">
+      <h3 class="h5">Top Matched Jobs</h3>
+      {% if scored %}
+        <div class="list-group list-group-flush">
+          {% for score, post in scored %}
+            <div class="list-group-item">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                  <div class="fw-semibold">{{ post.title }}</div>
+                  <div class="text-muted small mt-1">{{ post.description }}</div>
+                  {% if post.location %}
+                    <div class="text-muted small mt-1"><strong>Location:</strong> {{ post.location }}</div>
+                  {% endif %}
+                  {% if post.budget_min or post.budget_max %}
+                    <div class="text-muted small mt-1">
+                      <strong>Budget:</strong> 
+                      {% if post.budget_min and post.budget_max %}
+                        {{ post.budget_min }} - {{ post.budget_max }} BDT
+                      {% elif post.budget_min %}
+                        From {{ post.budget_min }} BDT
+                      {% elif post.budget_max %}
+                        Up to {{ post.budget_max }} BDT
+                      {% endif %}
+                    </div>
+                  {% endif %}
+                  <div class="text-muted small mt-1">
+                    <strong>Posted by:</strong> {{ post.finder.name }}
+                  </div>
+                </div>
+                <div class="text-end">
+                  <div class="badge bg-primary mb-2">Match Score: {{ score }}</div>
+                  <div class="text-muted small">Posted {{ post.created_at.strftime('%b %d, %Y') if post.created_at else 'Recently' }}</div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-muted mb-0">No matching jobs found at the moment. Check back later!</p>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+

@@ -1,0 +1,437 @@
+{% extends "base.html" %}
+
+{# Use `user` when provided (public view), otherwise fall back to current_user #}
+{% set profile_user = user if user is defined else current_user %}
+
+{% block content %}
+<div class="profile-container">
+    <!-- Cover Image Section -->
+    <div class="cover-image-container">
+        {% if current_user.cover_image %}
+            <img src="{{ url_for('static', filename=current_user.cover_image) }}" alt="Cover Image" class="cover-image">
+        {% else %}
+            <div class="default-cover"></div>
+        {% endif %}
+        
+        <!-- Profile Image Overlay -->
+        <div class="profile-image-overlay">
+            {% if current_user.profile_image %}
+                <img src="{{ url_for('static', filename=current_user.profile_image) }}" alt="Profile Image" class="profile-image">
+            {% else %}
+                <div class="default-profile-image">
+                    {{ current_user.name[0].upper() }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Main Profile Content -->
+    <div class="container profile-content">
+        <div class="row">
+            <!-- Left Column - Basic Info -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="profile-name">{{ current_user.name }}</h2>
+                        {% if current_user.tagline %}
+                            <p class="profile-tagline">{{ current_user.tagline }}</p>
+                        {% endif %}
+                        
+                        <div class="profile-meta">
+                            {% if current_user.location %}
+                                <p class="meta-item">
+                                    <i class="fas fa-map-marker-alt"></i> {{ current_user.location }}
+                                </p>
+                            {% endif %}
+                            {% if current_user.phone %}
+                                <p class="meta-item">
+                                    <i class="fas fa-phone"></i> {{ current_user.phone }}
+                                </p>
+                            {% endif %}
+                            {% if current_user.website %}
+                                <p class="meta-item">
+                                    <i class="fas fa-globe"></i> 
+                                    <a href="{{ current_user.website }}" target="_blank">Website</a>
+                                </p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Social Links -->
+                        {% set social = social if social is defined else {} %}
+                        {% if social %}
+                            <div class="social-links">
+                                {% if social.get('facebook') %}
+                                    <a href="{{ social.get('facebook') }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                                        <i class="fab fa-facebook"></i>
+                                    </a>
+                                {% endif %}
+                                {% if social.get('twitter') %}
+                                    <a href="{{ social.get('twitter') }}" class="btn btn-outline-info btn-sm" target="_blank">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                {% endif %}
+                                {% if social.get('linkedin') %}
+                                    <a href="{{ social.get('linkedin') }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Edit Profile Button -->
+                {% if current_user.id == profile_user.id %}
+                    <div class="mt-3">
+                        <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Right Column - Role Specific Content -->
+            <div class="col-md-8">
+                {% if current_user.role == 'provider' %}
+                    <!-- Provider Specific Content -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="card-title">Professional Info</h3>
+                                {% if current_user.provider.verified %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check-circle"></i> Verified
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            {% if current_user.provider.title %}
+                                <h4 class="text-primary">{{ current_user.provider.title }}</h4>
+                            {% endif %}
+
+                            {% if current_user.provider.business_name %}
+                                <p class="text-muted mb-3">{{ current_user.provider.business_name }}</p>
+                            {% endif %}
+
+                            {% if current_user.provider.description %}
+                                <div class="mb-4">
+                                    <h5>About</h5>
+                                    <p>{{ current_user.provider.description }}</p>
+                                </div>
+                            {% endif %}
+
+                            <!-- Professional Details -->
+                            <div class="row mb-4">
+                                {% if current_user.provider.experience_years %}
+                                    <div class="col-md-4">
+                                        <div class="stat-box">
+                                            <i class="fas fa-clock"></i>
+                                            <h4>{{ current_user.provider.experience_years }}</h4>
+                                            <p>Years Experience</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if current_user.provider.rating %}
+                                    <div class="col-md-4">
+                                        <div class="stat-box">
+                                            <i class="fas fa-star text-warning"></i>
+                                            <h4>{{ "%.1f"|format(current_user.provider.rating) }}</h4>
+                                            <p>Rating</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if current_user.provider.hourly_rate %}
+                                    <div class="col-md-4">
+                                        <div class="stat-box">
+                                            <i class="fas fa-money-bill-wave"></i>
+                                            <h4>{{ current_user.provider.hourly_rate }} BDT</h4>
+                                            <p>Per Hour</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Skills Section -->
+                            {% if skills %}
+                                <div class="mb-4">
+                                    <h5>Skills & Expertise</h5>
+                                    <div class="skills-container">
+                                        {% for skill in skills %}
+                                            <div class="skill-badge">
+                                                {{ skill.skill }}
+                                                {% if skill.proficiency %}
+                                                    <span class="proficiency {{ skill.proficiency }}">
+                                                        {{ skill.proficiency }}
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            <!-- Portfolio Section -->
+                            {% if portfolio_images %}
+                                <div class="mb-4">
+                                    <h5>Portfolio</h5>
+                                    <div class="portfolio-grid">
+                                        {% for image in portfolio_images %}
+                                            <div class="portfolio-item">
+                                                <img src="{{ url_for('static', filename=image) }}" alt="Portfolio Image" 
+                                                     class="img-fluid" data-bs-toggle="modal" 
+                                                     data-bs-target="#portfolioModal">
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            <!-- Business Hours -->
+                            {% if current_user.provider.business_hours %}
+                                <div class="mb-4">
+                                    <h5>Business Hours</h5>
+                                    <div class="business-hours">
+                                        {% set hours = current_user.provider.business_hours|fromjson %}
+                                        {% for day, time in hours.items() %}
+                                            <div class="hour-row">
+                                                <span class="day">{{ day }}</span>
+                                                <span class="time">{{ time }}</span>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                {% else %}
+                    <!-- Finder Specific Content -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <h3 class="card-title mb-4">About</h3>
+                            
+                            {% if current_user.finder.company_name %}
+                                <div class="company-info mb-4">
+                                    <h4 class="text-primary">{{ current_user.finder.company_name }}</h4>
+                                    {% if current_user.finder.industry %}
+                                        <p class="text-muted">{{ current_user.finder.industry }}</p>
+                                    {% endif %}
+                                    {% if current_user.finder.company_size %}
+                                        <p class="company-size">
+                                            <i class="fas fa-users"></i> {{ current_user.finder.company_size }} employees
+                                        </p>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+
+                            {% if current_user.finder.bio %}
+                                <div class="mb-4">
+                                    <p>{{ current_user.finder.bio }}</p>
+                                </div>
+                            {% endif %}
+
+                            <!-- Service Preferences -->
+                            {% if current_user.finder.preferences %}
+                                <div class="mb-4">
+                                    <h5>Service Preferences</h5>
+                                    <div class="preferences-container">
+                                        {% set prefs = current_user.finder.preferences|fromjson %}
+                                        {% for pref in prefs %}
+                                            <div class="preference-badge">
+                                                {{ pref }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            <!-- Recent Activity -->
+                            <div class="mb-4">
+                                <h5>Recent Posts</h5>
+                                <div class="recent-posts">
+                                    {% for post in posts %}
+                                        <div class="post-card">
+                                            <h6>{{ post.title }}</h6>
+                                            <p class="text-muted">Posted {{ post.created_at|timeago }}</p>
+                                            <div class="post-status {{ post.status }}">
+                                                {{ post.status|title }}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    {{ form.csrf_token }}
+                    
+                    <!-- Common Fields -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Profile Image</label>
+                            {{ form.profile_image(class="form-control") }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Cover Image</label>
+                            {{ form.cover_image(class="form-control") }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        {{ form.name(class="form-control") }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Professional Tagline</label>
+                        {{ form.tagline(class="form-control") }}
+                    </div>
+
+                    {% if current_user.role == 'provider' %}
+                        <!-- Provider Fields -->
+                        <div class="mb-3">
+                            <label class="form-label">Business Name</label>
+                            {{ form.business_name(class="form-control") }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Professional Title</label>
+                            {{ form.title(class="form-control") }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">About Your Services</label>
+                            {{ form.description(class="form-control", rows=4) }}
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Years of Experience</label>
+                                {{ form.experience_years(class="form-control") }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Hourly Rate (BDT)</label>
+                                {{ form.hourly_rate(class="form-control") }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Portfolio Images</label>
+                            {{ form.portfolio_images(class="form-control") }}
+                        </div>
+
+                    {% else %}
+                        <!-- Finder Fields -->
+                        <div class="mb-3">
+                            <label class="form-label">About You/Your Business</label>
+                            {{ form.bio(class="form-control", rows=4) }}
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Company Name</label>
+                                {{ form.company_name(class="form-control") }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Company Size</label>
+                                {{ form.company_size(class="form-control") }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Industry Sector</label>
+                            {{ form.industry(class="form-control") }}
+                        </div>
+                    {% endif %}
+
+                    <!-- Contact Information -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Phone Number</label>
+                            {{ form.phone(class="form-control") }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Website</label>
+                            {{ form.website(class="form-control") }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Location</label>
+                        {{ form.location(class="form-control") }}
+                    </div>
+
+                    <!-- Social Links -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Facebook Profile</label>
+                            {{ form.facebook(class="form-control") }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Twitter Profile</label>
+                            {{ form.twitter(class="form-control") }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">LinkedIn Profile</label>
+                            {{ form.linkedin(class="form-control") }}
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Portfolio Modal -->
+<div class="modal fade" id="portfolioModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <button type="button" class="btn-close position-absolute top-0 end-0 m-2" data-bs-dismiss="modal"></button>
+                <img src="" class="img-fluid" id="portfolioModalImage">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Portfolio image modal
+    const portfolioModal = document.getElementById('portfolioModal');
+    const portfolioModalImage = document.getElementById('portfolioModalImage');
+    
+    document.querySelectorAll('.portfolio-item img').forEach(img => {
+        img.addEventListener('click', function() {
+            portfolioModalImage.src = this.src;
+        });
+    });
+
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+{% endblock %}

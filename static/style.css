@@ -20,5 +20,44 @@
   box-shadow: 0 .5rem 1rem rgba(0,0,0,.1) !important;
 }
 
+/* Profile styles */
+.profile-image-container {
+  position: relative;
+  width: 150px;
+  margin: 0 auto;
+}
+
+.profile-image-container img,
+.default-profile-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.default-profile-image {
+  background: var(--se-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: white;
+}
+
+.skills-container .badge {
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+}
+
+.skills-container .badge a {
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.skills-container .badge a:hover {
+  opacity: 1;
+}
+
 /* Footer */
 footer { background: #fff; }

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 mb-0">My Profile</h2>
+    <a href="{{ url_for('finder_dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h2 class="h4">Finder Profile</h2>
+          <p class="mb-1"><strong>Name:</strong> {{ current_user.name }}</p>
+          <p class="mb-1"><strong>Email:</strong> {{ current_user.email }}</p>
+          {% if finder.bio %}
+            <p class="mb-1"><strong>Bio:</strong></p>
+            <p class="text-muted">{{ finder.bio }}</p>
+          {% endif %}
+          {% if finder.location %}
+            <p class="mb-0 text-muted"><strong>Location:</strong> {{ finder.location }}</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h5">Edit Profile</h2>
+          <form method="post" action="{{ url_for('finder_profile') }}" class="vstack gap-3 mt-2">
+            {{ form.hidden_tag() }}
+            <div>
+              <label class="form-label">{{ form.bio.label.text }}</label>
+              {{ form.bio(class_='form-control', rows='4', placeholder='Tell us about yourself...') }}
+            </div>
+            <div>
+              <label class="form-label">{{ form.location.label.text }}</label>
+              {{ form.location(class_='form-control', placeholder='City, Country (optional)') }}
+            </div>
+            <div>
+              {{ form.submit(class_='btn btn-primary') }}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

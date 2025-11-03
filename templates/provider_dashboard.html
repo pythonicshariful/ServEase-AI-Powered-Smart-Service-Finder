@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 mb-0">Provider Dashboard</h2>
+    <a href="{{ url_for('provider_best_matches') }}" class="btn btn-primary">View Best Matched Jobs</a>
+  </div>
+
   <div class="row g-4">
     <div class="col-lg-6">
       <div class="card shadow-sm h-100">
@@ -7,6 +12,9 @@
           <h2 class="h4">Provider Profile</h2>
           <p class="mb-1 text-muted">{{ provider.title or "No title yet" }}</p>
           <p class="text-muted">{{ provider.description or "No description" }}</p>
+          {% if provider.location %}
+            <p class="text-muted"><strong>Location:</strong> {{ provider.location }}</p>
+          {% endif %}
           <span class="badge {{ 'bg-success' if provider.verified else 'bg-secondary' }}">{{ 'Verified' if provider.verified else 'Unverified' }}</span>
         </div>
       </div>
@@ -43,6 +51,10 @@
             <div>
               <label class="form-label">{{ form.description.label.text }}</label>
               {{ form.description(class_='form-control', rows='4', placeholder='Short summary of services, specialization, etc.') }}
+            </div>
+            <div>
+              <label class="form-label">{{ form.location.label.text }}</label>
+              {{ form.location(class_='form-control', placeholder='City, Country (optional)') }}
             </div>
             <div>
               {{ form.submit(class_='btn btn-primary') }}
