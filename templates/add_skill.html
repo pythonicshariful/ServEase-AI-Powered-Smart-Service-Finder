@@ -12,6 +12,14 @@
               {{ form.skill(class_='form-control', placeholder='e.g., Plumbing') }}
             </div>
             <div>
+              <label class="form-label">{{ form.proficiency.label.text }}</label>
+              {{ form.proficiency(class_='form-select') }}
+            </div>
+            <div>
+              <label class="form-label">{{ form.years_experience.label.text }}</label>
+              {{ form.years_experience(class_='form-control', placeholder='e.g., 5') }}
+            </div>
+            <div>
               {{ form.submit(class_='btn btn-primary') }}
             </div>
           </form>

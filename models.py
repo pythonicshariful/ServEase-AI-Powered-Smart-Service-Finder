@@ -65,6 +65,8 @@ class ProviderSkill(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     provider_id = db.Column(db.Integer, db.ForeignKey('providers.id'), nullable=False)
     skill = db.Column(db.String(120), nullable=False)
+    proficiency = db.Column(db.String(20))  # beginner, intermediate, expert
+    years_experience = db.Column(db.Integer)  # Years of experience with this skill
 
 class ServicePost(db.Model):
     __tablename__ = 'service_posts'

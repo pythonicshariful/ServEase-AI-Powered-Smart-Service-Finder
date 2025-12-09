@@ -88,7 +88,9 @@ def fromjson(s):
         return {}
 
 # Gemini API configuration
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')  # Set this as environment variable
+# GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')  
+# # Set this as environment variable
+GEMINI_API_KEY = 'AIzaSyAug7AiFstjl9ngsgi0sYE8Gwvf58l-Tm4'
 if GEMINI_API_KEY:
     import google.generativeai as genai
     genai.configure(api_key=GEMINI_API_KEY)
@@ -301,6 +303,12 @@ Format: ID1,ID2,ID3,etc"""
 # ----------------- routes -----------------
 @app.route('/')
 def home():
+    # Redirect authenticated users to their dashboards
+    if current_user.is_authenticated:
+        if current_user.role == 'provider':
+            return redirect(url_for('provider_best_matches'))
+        else:
+            return redirect(url_for('finder_dashboard'))
     return render_template('home.html')
 
 # Register
@@ -565,7 +573,7 @@ def delete_account():
 @login_required
 def dashboard():
     if current_user.role == 'provider':
-        return redirect(url_for('provider_dashboard'))
+        return redirect(url_for('provider_best_matches'))
     return redirect(url_for('finder_dashboard'))
 
 # Provider dashboard
@@ -615,12 +623,35 @@ def add_skill():
     form = SkillForm()
     if form.validate_on_submit():
         prov = current_user.provider
-        sk = ProviderSkill(provider_id=prov.id, skill=form.skill.data.strip())
+        sk = ProviderSkill(
+            provider_id=prov.id, 
+            skill=form.skill.data.strip(),
+            proficiency=form.proficiency.data,
+            years_experience=form.years_experience.data
+        )
         db.session.add(sk)
         db.session.commit()
         flash('Skill added.', 'success')
         return redirect(url_for('provider_dashboard'))
     return render_template('add_skill.html', form=form)
+
+# Delete skill
+@app.route('/provider/delete-skill/<int:skill_id>')
+@login_required
+def delete_skill(skill_id):
+    if current_user.role != 'provider':
+        flash('Access denied.', 'danger')
+        return redirect(url_for('dashboard'))
+    skill = ProviderSkill.query.get_or_404(skill_id)
+    # Ensure the skill belongs to the current user's provider profile
+    if skill.provider_id != current_user.provider.id:
+        flash('Access denied.', 'danger')
+        return redirect(url_for('dashboard'))
+    db.session.delete(skill)
+    db.session.commit()
+    flash('Skill removed.', 'success')
+    return redirect(url_for('user_profile'))
+
 
 # Finder dashboard
 @app.route('/finder')
@@ -654,6 +685,14 @@ def create_post():
         flash('Post created! Matching providers...', 'success')
         return redirect(url_for('view_matches', post_id=post.id))
     return render_template('create_post.html', form=form)
+
+# View individual post
+@app.route('/post/<int:post_id>')
+@login_required
+def view_post(post_id):
+    post = ServicePost.query.get_or_404(post_id)
+    return render_template('view_post.html', post=post)
+
 
 # View matches (AI-powered)
 @app.route('/post/<int:post_id>/matches')
@@ -806,6 +845,21 @@ if __name__ == '__main__':
                 if col_name not in finder_columns:
                     cursor.execute(f'ALTER TABLE finders ADD COLUMN {col_name} {col_type}')
                     print(f"✓ Added {col_name} column to finders table")
+
+            # Add new columns to provider_skills table
+            cursor.execute("PRAGMA table_info(provider_skills)")
+            skill_columns = [column[1] for column in cursor.fetchall()]
+            
+            new_skill_columns = {
+                'proficiency': 'VARCHAR(20)',
+                'years_experience': 'INTEGER'
+            }
+            
+            for col_name, col_type in new_skill_columns.items():
+                if col_name not in skill_columns:
+                    cursor.execute(f'ALTER TABLE provider_skills ADD COLUMN {col_name} {col_type}')
+                    print(f"✓ Added {col_name} column to provider_skills table")
+
 
             # Check if finders table exists
             cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='finders'")
