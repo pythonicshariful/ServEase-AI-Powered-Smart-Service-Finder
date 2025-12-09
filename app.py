@@ -88,9 +88,9 @@ def fromjson(s):
         return {}
 
 # Gemini API configuration
-# GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')  
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')  
 # # Set this as environment variable
-GEMINI_API_KEY = 'AIzaSyAug7AiFstjl9ngsgi0sYE8Gwvf58l-Tm4'
+
 if GEMINI_API_KEY:
     import google.generativeai as genai
     genai.configure(api_key=GEMINI_API_KEY)
