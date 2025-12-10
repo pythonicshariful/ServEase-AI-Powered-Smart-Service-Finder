@@ -13,7 +13,7 @@ import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'change_this_secret'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///servease.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instantfix.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # File upload configuration
@@ -89,7 +89,8 @@ def fromjson(s):
 
 # Gemini API configuration
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')  
-# # Set this as environment variable
+# Set this as environment variable
+
 
 if GEMINI_API_KEY:
     import google.generativeai as genai
@@ -782,7 +783,7 @@ if __name__ == '__main__':
         # Auto-migration: Add new columns
         try:
             import sqlite3
-            conn = sqlite3.connect('instance/servease.db')
+            conn = sqlite3.connect('instance/instantfix.db')
             cursor = conn.cursor()
 
             # Check users table columns
