@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}Leave a Review – Mistribhai{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center fade-in-up">
+  <div class="col-md-7 col-lg-6">
+
+    <div class="d-flex align-items-center gap-3 mb-4">
+      <a href="{{ url_for('finder.dashboard') }}" class="btn btn-outline-secondary btn-sm btn-pill">
+        <i class="fa-solid fa-arrow-left me-1"></i>Back
+      </a>
+      <div>
+        <div class="dashboard-title" style="font-size:1.3rem;margin-bottom:0;">
+          <i class="fa-solid fa-star me-2" style="font-size:.85em;color:#f59e0b;"></i>Leave a Review
+        </div>
+        <div class="dashboard-subtitle">for <strong>{{ post.title }}</strong></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <form method="post" class="vstack gap-3" id="review-form">
+          {{ form.hidden_tag() }}
+
+          <div>
+            <label class="form-label fw-semibold">
+              <i class="fa-solid fa-star me-1" style="color:#f59e0b;font-size:.85em;"></i>
+              {{ form.rating.label.text }}
+            </label>
+            <div class="d-flex gap-2 flex-wrap mb-2">
+              {% for value, label in [('5','⭐⭐⭐⭐⭐ Excellent'),('4','⭐⭐⭐⭐ Good'),('3','⭐⭐⭐ Average'),('2','⭐⭐ Poor'),('1','⭐ Very Poor')] %}
+              <label class="rating-option">
+                <input type="radio" name="rating" value="{{ value }}" class="d-none rating-radio" id="rating-{{ value }}">
+                <span class="badge bg-light border text-dark px-3 py-2 rating-label" style="cursor:pointer;border-radius:10px;font-size:.85rem;"
+                  onclick="document.querySelectorAll('.rating-label').forEach(l=>l.classList.remove('active-rating')); this.classList.add('active-rating');">
+                  {{ label }}
+                </span>
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label fw-semibold">
+              <i class="fa-solid fa-comment me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+              {{ form.comment.label.text }}
+            </label>
+            {{ form.comment(class_='form-control', rows=4, placeholder='Share your experience with this provider...') }}
+          </div>
+
+          <div class="d-flex gap-2">
+            {{ form.submit(class_='btn btn-primary px-4') }}
+            <a href="{{ url_for('finder.dashboard') }}" class="btn btn-outline-secondary">Skip</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+document.querySelectorAll('.rating-radio').forEach(radio => {
+  radio.addEventListener('change', () => {
+    document.querySelectorAll('.rating-label').forEach(l => l.classList.remove('active-rating'));
+    radio.nextElementSibling.classList.add('active-rating');
+  });
+});
+// CSS for active-rating
+const style = document.createElement('style');
+style.textContent = '.active-rating { background: var(--se-gradient) !important; color: #fff !important; border-color: transparent !important; }';
+document.head.appendChild(style);
+</script>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}Chat with {{ other_user.name }} – Mistribhai{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center fade-in-up">
+  <div class="col-lg-8">
+
+    <!-- Header -->
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <a href="{{ url_for('messages.inbox') }}" class="btn btn-outline-secondary btn-sm btn-pill">
+        <i class="fa-solid fa-arrow-left me-1"></i>Back
+      </a>
+      <div class="conv-avatar" style="width:40px;height:40px;font-size:1rem;border-radius:10px;">
+        {{ other_user.name[0].upper() }}
+      </div>
+      <div>
+        <div class="fw-bold" style="font-size:1rem;">{{ other_user.name }}</div>
+        <div class="text-muted small">{{ other_user.role|capitalize }}
+          {% if other_user.role == 'provider' and other_user.provider %}
+          · {{ other_user.provider.title or 'Service Provider' }}
+          {% endif %}
+        </div>
+      </div>
+      <a href="{{ url_for('core.view_profile', user_id=other_user.id) }}" class="btn btn-outline-primary btn-sm btn-pill ms-auto">
+        <i class="fa-solid fa-user me-1"></i>View Profile
+      </a>
+    </div>
+
+    <!-- Chat -->
+    <div class="card">
+      <div class="card-body p-0">
+        <div class="chat-container" id="chat-messages">
+          {% if messages %}
+          {% for msg in messages %}
+          <div class="d-flex flex-column">
+            <div class="msg-bubble {{ 'sent' if msg.sender_id == current_user.id else 'received' }}">
+              {{ msg.content }}
+            </div>
+            <div class="msg-time {{ '' if msg.sender_id == current_user.id else 'msg-received-time' }}">
+              {{ msg.created_at | timeago }}
+            </div>
+          </div>
+          {% endfor %}
+          {% else %}
+          <div class="text-center text-muted py-4">
+            <i class="fa-solid fa-comments" style="font-size:2rem;opacity:.3;"></i>
+            <p class="mt-2 mb-0 small">Start the conversation!</p>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Send form -->
+        <div class="p-3 border-top">
+          <form method="post" class="d-flex gap-2" id="message-form">
+            {{ form.hidden_tag() }}
+            {{ form.content(class_='form-control', rows=2, placeholder='Type your message...', style='resize:none;', id='msg-input') }}
+            <button type="submit" class="btn btn-primary px-4" id="send-msg-btn" style="align-self:flex-end;">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+  // Auto-scroll to bottom
+  const chatBox = document.getElementById('chat-messages');
+  if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+
+  // Submit on Ctrl+Enter
+  document.getElementById('msg-input').addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'Enter') {
+      document.getElementById('message-form').submit();
+    }
+  });
+</script>
+{% endblock %}

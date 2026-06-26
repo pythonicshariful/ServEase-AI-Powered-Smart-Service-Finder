@@ -1,28 +1,95 @@
 {% extends 'base.html' %}
+{% block title %}Mistribhai – Find Trusted Service Pros in Minutes{% endblock %}
 {% block content %}
-<section class="py-5">
+
+<!-- ===== HERO ===== -->
+<section class="se-hero fade-in-up">
   <div class="row align-items-center">
-    <div class="col-lg-7">
-      <h1 class="display-5 fw-bold">Find trusted service pros in minutes</h1>
-      <p class="lead text-muted mt-3">InstantFix matches your needs with verified providers using smart, skill-based
-        scoring.</p>
-      <div class="d-flex gap-2 mt-3">
-        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">Get Started</a>
-        <a href="{{ url_for('login') }}" class="btn btn-outline-secondary btn-lg">Sign In</a>
+
+    <!-- Left: Headline -->
+    <div class="col-lg-6 mb-5 mb-lg-0">
+      <!-- Eyebrow label -->
+      <div class="mb-4">
+        <span class="se-feature-tag">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> AI-Powered Matching
+        </span>
       </div>
-    </div>
-    <div class="col-lg-5 mt-4 mt-lg-0">
-      <div class="card shadow-sm border-0">
-        <div class="card-body p-4">
-          <h2 class="h5">How it works</h2>
-          <ol class="mb-0 mt-2">
-            <li>Create an account as a Finder or Provider</li>
-            <li>Post a job or add your skills</li>
-            <li>Get instant matches powered by smart scoring</li>
-          </ol>
+
+      <h1 class="se-hero-heading">
+        Find trusted service pros in minutes
+      </h1>
+      <p class="se-hero-sub">
+        Mistribhai intelligently matches your needs with verified service providers using real-time, skill-based AI scoring — fast, fair, and reliable.
+      </p>
+
+      <!-- CTAs -->
+      <div class="se-hero-cta d-flex gap-3 flex-wrap mt-4">
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg" id="hero-get-started">
+          <i class="fa-solid fa-rocket me-2"></i>Get Started Free
+        </a>
+        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary btn-lg" id="hero-sign-in">
+          Sign In <i class="fa-solid fa-arrow-right ms-2"></i>
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="se-stats-strip">
+        <div class="se-stat">
+          <div class="se-stat-value">AI</div>
+          <div class="se-stat-label">Powered Matching</div>
+        </div>
+        <div class="se-stat">
+          <div class="se-stat-value">100%</div>
+          <div class="se-stat-label">Skill-Based Scoring</div>
+        </div>
+        <div class="se-stat">
+          <div class="se-stat-value">Free</div>
+          <div class="se-stat-label">To Get Started</div>
         </div>
       </div>
     </div>
+
+    <!-- Right: "How it works" card -->
+    <div class="col-lg-6 fade-in-up fade-in-up-delay-1">
+      <div class="se-how-card">
+        <div class="se-section-title mb-3">
+          <i class="fa-solid fa-circle-question"></i> How Mistribhai Works
+        </div>
+
+        <div class="se-how-step">
+          <div class="se-step-num">1</div>
+          <div>
+            <div class="fw-bold" style="font-size:.95rem;color:var(--text-primary);">Create Your Account</div>
+            <div class="se-step-text">Sign up as a <strong>Service Finder</strong> (post jobs) or a <strong>Service Provider</strong> (get hired).</div>
+          </div>
+        </div>
+
+        <div class="se-how-step">
+          <div class="se-step-num">2</div>
+          <div>
+            <div class="fw-bold" style="font-size:.95rem;color:var(--text-primary);">Post a Job or Add Skills</div>
+            <div class="se-step-text">Describe the task you need done, or showcase your expertise and experience.</div>
+          </div>
+        </div>
+
+        <div class="se-how-step">
+          <div class="se-step-num">3</div>
+          <div>
+            <div class="fw-bold" style="font-size:.95rem;color:var(--text-primary);">Get Instant AI Matches</div>
+            <div class="se-step-text">Our advanced AI analyses skills, ratings, and location to surface the best matches instantly.</div>
+          </div>
+        </div>
+
+        <!-- Mini feature chips -->
+        <div class="d-flex flex-wrap gap-2 mt-4 pt-3 border-top border-soft">
+          <span class="se-feature-tag"><i class="fa-solid fa-shield-halved"></i> Verified Providers</span>
+          <span class="se-feature-tag"><i class="fa-solid fa-star"></i> Rating System</span>
+          <span class="se-feature-tag"><i class="fa-solid fa-location-dot"></i> Location Filter</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
+
 {% endblock %}

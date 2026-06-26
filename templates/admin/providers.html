@@ -1,0 +1,47 @@
+{% extends 'admin/layout.html' %}
+{% block admin_content %}
+<div class="card">
+    <div class="card-body">
+        <h3 class="fw-bold mb-4">Provider Verification</h3>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Title</th>
+                        <th>Verified</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in providers %}
+                    <tr>
+                        <td>{{ p.id }}</td>
+                        <td>{{ p.user.name }}</td>
+                        <td>{{ p.user.email }}</td>
+                        <td>{{ p.title }}</td>
+                        <td>
+                            {% if p.verified %}
+                                <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Yes</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark"><i class="fa-solid fa-clock me-1"></i>No</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="post" action="{{ url_for('admin.toggle_verify', provider_id=p.id) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button class="btn btn-sm {% if p.verified %}btn-outline-danger{% else %}btn-primary{% endif %}">
+                                    {% if p.verified %}Revoke{% else %}Verify{% endif %}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

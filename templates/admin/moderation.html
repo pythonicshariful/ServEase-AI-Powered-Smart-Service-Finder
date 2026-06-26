@@ -1,0 +1,90 @@
+{% extends 'admin/layout.html' %}
+{% block admin_content %}
+<div class="card mb-4">
+    <div class="card-body">
+        <h3 class="fw-bold mb-4">Content Moderation</h3>
+        
+        <h5 class="fw-bold mt-4 mb-3">Service Posts</h5>
+        <div class="table-responsive mb-4">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Finder</th>
+                        <th>Status</th>
+                        <th>Visibility</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for post in posts %}
+                    <tr>
+                        <td>{{ post.id }}</td>
+                        <td>{{ post.title }}</td>
+                        <td>{{ post.finder.email }}</td>
+                        <td>{{ post.status }}</td>
+                        <td>
+                            {% if post.is_hidden %}
+                                <span class="badge bg-danger">Hidden</span>
+                            {% else %}
+                                <span class="badge bg-success">Visible</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="post" action="{{ url_for('admin.toggle_post_visibility', post_id=post.id) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button class="btn btn-sm {% if post.is_hidden %}btn-success{% else %}btn-warning{% endif %}">
+                                    {% if post.is_hidden %}Unhide{% else %}Hide{% endif %}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <hr>
+
+        <h5 class="fw-bold mt-4 mb-3">Reviews</h5>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Rating</th>
+                        <th>Comment</th>
+                        <th>Visibility</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for review in reviews %}
+                    <tr>
+                        <td>{{ review.id }}</td>
+                        <td>{{ review.rating }} ⭐</td>
+                        <td>{{ review.comment[:50] }}...</td>
+                        <td>
+                            {% if review.is_hidden %}
+                                <span class="badge bg-danger">Hidden</span>
+                            {% else %}
+                                <span class="badge bg-success">Visible</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="post" action="{{ url_for('admin.toggle_review_visibility', review_id=review.id) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button class="btn btn-sm {% if review.is_hidden %}btn-success{% else %}btn-warning{% endif %}">
+                                    {% if review.is_hidden %}Unhide{% else %}Hide{% endif %}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

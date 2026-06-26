@@ -1,39 +1,89 @@
 {% extends 'base.html' %}
+{% block title %}Create Account – Mistribhai{% endblock %}
 {% block content %}
-  <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-7">
-      <div class="card shadow-sm">
-        <div class="card-body p-4">
-          <h2 class="h4 mb-3">Create your account</h2>
-          <form method="post" class="row g-3">
-            {{ form.hidden_tag() }}
-            <div class="col-12">
-              <label class="form-label">{{ form.name.label.text }}</label>
-              {{ form.name(class_='form-control', placeholder='Your full name') }}
+
+<div class="row justify-content-center fade-in-up">
+  <div class="col-md-8 col-lg-6">
+
+    <!-- Brand mark -->
+    <div class="text-center mb-4">
+      <div style="font-size:2.2rem;font-weight:900;background:var(--se-gradient);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-1px;">
+        <i class="fa-solid fa-bolt-lightning me-1" style="font-size:.75em;"></i>Mistribhai
+      </div>
+      <p class="text-muted small mt-1">Join thousands finding & providing services</p>
+    </div>
+
+    <div class="card">
+      <div class="card-body" style="padding:2rem;">
+        <h1 class="h4 fw-bold mb-1" style="letter-spacing:-.3px;">Create your account</h1>
+        <p class="text-muted small mb-4">Free forever · No credit card required</p>
+
+        <form method="post" class="row g-3" id="register-form">
+          {{ form.hidden_tag() }}
+
+          <div class="col-12">
+            <label class="form-label">
+              <i class="fa-solid fa-user me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+              {{ form.name.label.text }}
+            </label>
+            {{ form.name(class_='form-control', placeholder='Your full name') }}
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">
+              <i class="fa-solid fa-envelope me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+              {{ form.email.label.text }}
+            </label>
+            {{ form.email(class_='form-control', placeholder='you@example.com') }}
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">
+              <i class="fa-solid fa-lock me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+              {{ form.password.label.text }}
+            </label>
+            {{ form.password(class_='form-control', placeholder='Create a password') }}
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">
+              <i class="fa-solid fa-lock me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+              {{ form.confirm.label.text }}
+            </label>
+            {{ form.confirm(class_='form-control', placeholder='Repeat password') }}
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">
+              <i class="fa-solid fa-user-tag me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+              {{ form.role.label.text }}
+            </label>
+            {{ form.role(class_='form-select') }}
+            <div class="d-flex gap-3 mt-2">
+              <div class="se-feature-tag small">
+                <i class="fa-solid fa-magnifying-glass"></i> Finder = Post jobs
+              </div>
+              <div class="se-feature-tag small">
+                <i class="fa-solid fa-briefcase"></i> Provider = Get hired
+              </div>
             </div>
-            <div class="col-12">
-              <label class="form-label">{{ form.email.label.text }}</label>
-              {{ form.email(class_='form-control', placeholder='you@example.com') }}
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">{{ form.password.label.text }}</label>
-              {{ form.password(class_='form-control', placeholder='Create a password') }}
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">{{ form.confirm.label.text }}</label>
-              {{ form.confirm(class_='form-control', placeholder='Repeat password') }}
-            </div>
-            <div class="col-12">
-              <label class="form-label">{{ form.role.label.text }}</label>
-              {{ form.role(class_='form-select') }}
-            </div>
-            <div class="col-12 d-grid">
-              {{ form.submit(class_='btn btn-primary') }}
-            </div>
-          </form>
-          <p class="mt-3 mb-0 text-muted">Already registered? <a href="{{ url_for('login') }}">Login</a></p>
-        </div>
+          </div>
+
+          <div class="col-12 d-grid mt-1">
+            {{ form.submit(class_='btn btn-primary btn-lg') }}
+          </div>
+        </form>
+
+        <hr class="my-3" style="border-color:var(--border-soft);">
+
+        <p class="text-center text-muted small mb-0">
+          Already have an account?
+          <a href="{{ url_for('auth.login') }}" class="fw-bold" style="color:var(--se-purple);">Sign in</a>
+        </p>
       </div>
     </div>
+
   </div>
+</div>
+
 {% endblock %}

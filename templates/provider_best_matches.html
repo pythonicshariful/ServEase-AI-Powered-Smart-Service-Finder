@@ -1,72 +1,127 @@
 {% extends 'base.html' %}
+{% block title %}Best Matched Jobs – Mistribhai{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h2 class="h4 mb-0">Best Matched Jobs for You</h2>
+
+<!-- Header -->
+<div class="dashboard-header fade-in-up">
   <div>
-    <a href="{{ url_for('provider_dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+    <div class="dashboard-title" style="font-size:1.4rem;">
+      <i class="fa-solid fa-wand-magic-sparkles me-2" style="font-size:.85em;"></i>Best Matched Jobs
+    </div>
+    <div class="dashboard-subtitle">AI-ranked open jobs based on your skills &amp; profile</div>
+  </div>
+  <a href="{{ url_for('provider.dashboard') }}" class="btn btn-outline-secondary" id="back-to-provider-dashboard">
+    <i class="fa-solid fa-arrow-left me-1"></i>My Dashboard
+  </a>
+</div>
+
+<!-- AI banner -->
+<div class="alert alert-info d-flex align-items-center gap-3 fade-in-up fade-in-up-delay-1" role="alert">
+  <span class="ai-badge"><i class="fa-solid fa-wand-magic-sparkles me-1"></i>AI</span>
+  <div>
+    <strong>AI-Powered Matching:</strong> Jobs are ranked using advanced AI
+    based on your skills, expertise, and profile completeness.
   </div>
 </div>
 
-<div class="alert alert-info" role="alert">
-  <strong>AI-Powered Matching:</strong> These jobs are matched using Google Gemini AI based on your skills, expertise,
-  and profile.
-</div>
-
-<div class="card shadow-sm">
+<!-- Profile snapshot -->
+<div class="card mb-4 fade-in-up fade-in-up-delay-1">
   <div class="card-body">
-    <h3 class="h5">Your Profile</h3>
-    <p class="mb-1"><strong>{{ provider.title or 'No title set' }}</strong></p>
-    <p class="text-muted">{{ provider.description or 'No description' }}</p>
-    {% if provider.location %}
-    <p class="text-muted small mb-0"><strong>Location:</strong> {{ provider.location }}</p>
-    {% endif %}
+    <div class="se-section-title mb-2"><i class="fa-solid fa-id-card"></i> Your Profile Snapshot</div>
+    <div class="d-flex align-items-center gap-3">
+      <div style="width:52px;height:52px;border-radius:14px;background:var(--se-gradient);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.3rem;font-weight:800;flex-shrink:0;">
+        {{ current_user.name[0].upper() if current_user.is_authenticated }}
+      </div>
+      <div>
+        <div class="fw-bold">{{ provider.title or 'No title set' }}</div>
+        <p class="text-muted small mb-1">{{ (provider.description or 'No description')[:100] }}{{ '...' if (provider.description or '')|length > 100 }}</p>
+        <div class="d-flex flex-wrap gap-2">
+          {% if provider.location %}
+          <span class="match-chip"><i class="fa-solid fa-location-dot"></i> {{ provider.location }}</span>
+          {% endif %}
+          <span class="badge {{ 'badge-verified' if provider.verified else 'bg-secondary' }}">
+            {{ '✓ Verified' if provider.verified else 'Unverified' }}
+          </span>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="card shadow-sm mt-3">
+<!-- Matched jobs -->
+<div class="card fade-in-up fade-in-up-delay-2">
   <div class="card-body">
-    <h3 class="h5">Top Matched Jobs</h3>
+    <div class="se-section-title mb-3">
+      <i class="fa-solid fa-ranking-star"></i> Top {{ scored|length }} Matched Jobs
+    </div>
+
     {% if scored %}
-    <div class="list-group list-group-flush">
+    <div class="list-group list-group-flush" style="border-radius:var(--border-radius-sm);overflow:hidden;">
       {% for score, post in scored %}
-      <a href="{{ url_for('view_post', post_id=post.id) }}" class="list-group-item list-group-item-action">
-        <div class="d-flex justify-content-between align-items-start">
-          <div class="flex-grow-1">
-            <div class="fw-semibold">{{ post.title }}</div>
-            <div class="text-muted small mt-1">{{ post.description[:150] }}{% if post.description|length > 150 %}...{%
-              endif %}</div>
-            {% if post.location %}
-            <div class="text-muted small mt-1"><strong>Location:</strong> {{ post.location }}</div>
-            {% endif %}
-            {% if post.budget_min or post.budget_max %}
-            <div class="text-muted small mt-1">
-              <strong>Budget:</strong>
-              {% if post.budget_min and post.budget_max %}
-              {{ post.budget_min }} - {{ post.budget_max }} BDT
-              {% elif post.budget_min %}
-              From {{ post.budget_min }} BDT
-              {% elif post.budget_max %}
-              Up to {{ post.budget_max }} BDT
-              {% endif %}
+      <a href="{{ url_for('view_post', post_id=post.id) }}"
+        class="list-group-item list-group-item-action" id="job-post-{{ post.id }}">
+        <div class="match-card-inner">
+
+          <!-- Icon + info -->
+          <div class="d-flex gap-3 flex-grow-1">
+            <div style="width:46px;height:46px;border-radius:12px;background:var(--se-gradient-soft);border:1px solid var(--border-soft);display:flex;align-items:center;justify-content:center;color:var(--se-purple);font-size:1.2rem;flex-shrink:0;">
+              <i class="fa-solid fa-briefcase"></i>
             </div>
-            {% endif %}
-            <div class="text-muted small mt-1">
-              <strong>Posted by:</strong>
-              <span class="text-primary">{{ post.finder.name }}</span>
+            <div class="flex-grow-1">
+              <div class="match-name">{{ post.title }}</div>
+              <div class="match-title">{{ (post.description or '')[:120] }}{{ '...' if (post.description or '')|length > 120 }}</div>
+              <div class="match-meta">
+                {% if post.location %}
+                <span class="match-chip"><i class="fa-solid fa-location-dot"></i> {{ post.location }}</span>
+                {% endif %}
+                {% if post.budget_min or post.budget_max %}
+                <span class="match-chip">
+                  <i class="fa-solid fa-bangladeshi-taka-sign"></i>
+                  {% if post.budget_min and post.budget_max %}
+                    {{ post.budget_min }}–{{ post.budget_max }} BDT
+                  {% elif post.budget_min %}
+                    From {{ post.budget_min }} BDT
+                  {% else %}
+                    Up to {{ post.budget_max }} BDT
+                  {% endif %}
+                </span>
+                {% endif %}
+                <span class="match-chip" style="color:#059669;">
+                  <i class="fa-solid fa-user"></i> {{ post.finder.name }}
+                </span>
+                {% if post.created_at %}
+                <span class="match-chip">
+                  <i class="fa-regular fa-clock"></i> {{ post.created_at | timeago }}
+                </span>
+                {% endif %}
+              </div>
             </div>
           </div>
-          <div class="text-end">
-            <div class="badge bg-primary mb-2">Match Score: {{ score }}</div>
-            <div class="text-muted small">Posted {{ post.created_at.strftime('%b %d, %Y') if post.created_at else
-              'Recently' }}</div>
+
+          <!-- Score -->
+          <div class="text-end flex-shrink-0 ms-2">
+            <span class="badge-score">{{ score }}</span>
+            <div class="text-muted small mt-1" style="font-size:.72rem;">Match Score</div>
+            <div class="mt-2">
+              <span class="btn btn-outline-primary btn-sm btn-pill">View Job</span>
+            </div>
           </div>
+
         </div>
       </a>
       {% endfor %}
     </div>
     {% else %}
-    <p class="text-muted mb-0">No matching jobs found at the moment. Check back later!</p>
+    <div class="text-center py-5">
+      <i class="fa-solid fa-briefcase" style="font-size:3rem;color:var(--border-soft);"></i>
+      <p class="text-muted mt-3 mb-3">No matching jobs right now. Complete your profile to get better matches!</p>
+      <a href="{{ url_for('core.user_profile') }}" class="btn btn-primary" id="complete-profile-btn">
+        <i class="fa-solid fa-pen-to-square me-2"></i>Complete Profile
+      </a>
+    </div>
     {% endif %}
+
   </div>
 </div>
+
 {% endblock %}

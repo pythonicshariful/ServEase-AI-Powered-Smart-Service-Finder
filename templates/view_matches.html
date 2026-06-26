@@ -1,47 +1,182 @@
 {% extends 'base.html' %}
+{% block title %}AI Matches – {{ post.title }} – Mistribhai{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
+
+<!-- Header -->
+<div class="dashboard-header fade-in-up">
   <div>
-    <h2 class="h4 mb-1">Matches for: {{ post.title }}</h2>
-    <p class="text-muted mb-0">{{ post.description }}</p>
+    <div class="dashboard-title" style="font-size:1.4rem;">
+      <i class="fa-solid fa-users me-2" style="font-size:.85em;"></i>Matched Providers
+    </div>
+    <div class="dashboard-subtitle">{{ post.title }}</div>
   </div>
-  <a href="{{ url_for('finder_dashboard') }}" class="btn btn-outline-secondary">Back</a>
+  <a href="{{ url_for('finder.dashboard') }}" class="btn btn-outline-secondary" id="back-to-dashboard">
+    <i class="fa-solid fa-arrow-left me-1"></i>Back
+  </a>
 </div>
 
-<div class="alert alert-info" role="alert">
-  <strong>AI-Powered Matching:</strong> These providers are matched using Google Gemini AI based on their skills,
-  expertise, and experience.
+<!-- AI info banner -->
+<div class="alert alert-info d-flex align-items-center gap-3 fade-in-up fade-in-up-delay-1" role="alert">
+  <span class="ai-badge"><i class="fa-solid fa-wand-magic-sparkles me-1"></i>AI</span>
+  <div>
+    <strong>AI-Powered Matching:</strong> These providers are ranked using advanced AI
+    based on their skills, expertise, verification status, and experience.
+  </div>
 </div>
 
-<div class="card shadow-sm">
+<!-- Post summary -->
+<div class="card mb-4 fade-in-up fade-in-up-delay-1">
   <div class="card-body">
-    <h3 class="h5">Top Matches</h3>
+    <div class="se-section-title mb-2"><i class="fa-solid fa-file-lines"></i> Your Job Post</div>
+    <div class="fw-bold mb-1">{{ post.title }}</div>
+    {% if post.description %}
+    <p class="text-muted small mb-2">{{ post.description }}</p>
+    {% endif %}
+    <div class="d-flex flex-wrap gap-2">
+      {% if post.location %}
+      <span class="match-chip"><i class="fa-solid fa-location-dot"></i> {{ post.location }}</span>
+      {% endif %}
+      {% if post.budget_min or post.budget_max %}
+      <span class="match-chip"><i class="fa-solid fa-bangladeshi-taka-sign"></i>
+        {{ post.budget_min or 0 }}–{{ post.budget_max or '?' }} BDT</span>
+      {% endif %}
+      <span class="post-status open">Open</span>
+    </div>
+  </div>
+</div>
+
+<!-- Search / Filter bar -->
+<div class="card mb-3 fade-in-up fade-in-up-delay-1">
+  <div class="card-body py-2">
+    <div class="d-flex flex-wrap gap-2 align-items-center">
+      <input type="text" id="filter-search" class="form-control form-control-sm"
+        style="max-width:220px;" placeholder="Filter by name or skill…">
+      <select id="filter-verified" class="form-select form-select-sm" style="max-width:150px;">
+        <option value="">All Providers</option>
+        <option value="verified">✓ Verified Only</option>
+      </select>
+      <select id="filter-rating" class="form-select form-select-sm" style="max-width:160px;">
+        <option value="0">Any Rating</option>
+        <option value="4">4★ and above</option>
+        <option value="3">3★ and above</option>
+      </select>
+      <span class="text-muted small ms-auto" id="filter-count">{{ scored|length }} providers</span>
+    </div>
+  </div>
+</div>
+
+<!-- Matches list -->
+<div class="card fade-in-up fade-in-up-delay-2">
+  <div class="card-body">
+    <div class="se-section-title mb-3">
+      <i class="fa-solid fa-ranking-star"></i> Top {{ scored|length }} Matches
+    </div>
+
     {% if scored %}
-    <div class="list-group list-group-flush">
+    <div class="list-group list-group-flush" id="matches-list" style="border-radius:var(--border-radius-sm);overflow:hidden;">
       {% for score, prov in scored %}
-      <a href="{{ url_for('view_profile', user_id=prov.user.id) }}" class="list-group-item list-group-item-action">
-        <div class="d-flex justify-content-between align-items-start">
-          <div class="flex-grow-1">
-            <div class="fw-semibold">{{ prov.user.name }}</div>
-            <div class="text-muted">{{ prov.title or 'No title' }}</div>
-            <div class="small mt-1"><span class="text-muted">Skills:</span> {% for s in prov.skills %}{{ s.skill }}{% if
-              not loop.last %}, {% endif %}{% endfor %}</div>
-            {% if prov.location %}
-            <div class="small text-muted mt-1"><strong>Location:</strong> {{ prov.location }}</div>
-            {% endif %}
+      <a href="{{ url_for('core.view_profile', user_id=prov.user.id) }}"
+        class="list-group-item list-group-item-action match-item"
+        id="match-provider-{{ prov.id }}"
+        data-name="{{ prov.user.name|lower }}"
+        data-skills="{{ prov.skills | map(attribute='skill') | join(' ') | lower }}"
+        data-verified="{{ 'true' if prov.verified else 'false' }}"
+        data-rating="{{ prov.rating or 0 }}">
+        <div class="match-card-inner">
+
+          <!-- Avatar + info -->
+          <div class="d-flex gap-3 flex-grow-1">
+            <div style="width:46px;height:46px;border-radius:12px;background:var(--se-gradient);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.1rem;flex-shrink:0;">
+              {{ prov.user.name[0].upper() }}
+            </div>
+            <div class="flex-grow-1">
+              <div class="match-name">{{ prov.user.name }}</div>
+              <div class="match-title">{{ prov.title or 'Service Provider' }}</div>
+              <div class="match-meta">
+                {% if prov.skills %}
+                <span class="match-chip">
+                  <i class="fa-solid fa-screwdriver-wrench"></i>
+                  {% for s in prov.skills[:3] %}{{ s.skill }}{% if not loop.last %}, {% endif %}{% endfor %}
+                  {% if prov.skills|length > 3 %} +{{ prov.skills|length - 3 }}{% endif %}
+                </span>
+                {% endif %}
+                {% if prov.location %}
+                <span class="match-chip"><i class="fa-solid fa-location-dot"></i> {{ prov.location }}</span>
+                {% endif %}
+                {% if prov.rating %}
+                <span class="match-chip" style="color:#d97706;">
+                  <i class="fa-solid fa-star"></i> {{ prov.rating }}
+                </span>
+                {% endif %}
+                {% if prov.verified %}
+                <span class="match-chip" style="color:#059669;">
+                  <i class="fa-solid fa-circle-check"></i> Verified
+                </span>
+                {% endif %}
+              </div>
+            </div>
           </div>
-          <div class="text-end">
-            <div class="badge bg-primary mb-2">Match Score: {{ score }}</div>
-            {% if prov.verified %}<div class="small text-success">✓ Verified</div>{% endif %}
-            {% if prov.rating %}<div class="small text-warning">⭐ {{ prov.rating }}</div>{% endif %}
+
+          <!-- Score badge + actions -->
+          <div class="text-end flex-shrink-0 ms-2">
+            <span class="badge-score">{{ score }}</span>
+            <div class="text-muted small mt-1" style="font-size:.72rem;">Match Score</div>
+            <div class="mt-2 d-flex flex-column gap-1">
+              <span class="btn btn-outline-primary btn-sm btn-pill">View Profile</span>
+              <a href="{{ url_for('messages.start_conversation', other_user_id=prov.user.id) }}"
+                class="btn btn-outline-secondary btn-sm btn-pill"
+                onclick="event.stopPropagation();">
+                <i class="fa-solid fa-envelope me-1" style="font-size:.75em;"></i>Message
+              </a>
+            </div>
           </div>
+
         </div>
       </a>
       {% endfor %}
     </div>
+
     {% else %}
-    <p class="text-muted mb-0">No providers found.</p>
+    <div class="text-center py-5">
+      <i class="fa-solid fa-users-slash" style="font-size:3rem;color:var(--border-soft);"></i>
+      <p class="text-muted mt-3 mb-0">No providers found yet. Check back soon!</p>
+    </div>
     {% endif %}
+
   </div>
 </div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+// Client-side search/filter
+const searchInput   = document.getElementById('filter-search');
+const verifiedSel   = document.getElementById('filter-verified');
+const ratingSel     = document.getElementById('filter-rating');
+const countEl       = document.getElementById('filter-count');
+const items         = document.querySelectorAll('.match-item');
+
+function applyFilter() {
+  const q       = (searchInput.value || '').toLowerCase().trim();
+  const verOnly = verifiedSel.value === 'verified';
+  const minRat  = parseFloat(ratingSel.value) || 0;
+  let visible   = 0;
+  items.forEach(item => {
+    const name     = item.dataset.name || '';
+    const skills   = item.dataset.skills || '';
+    const verified = item.dataset.verified === 'true';
+    const rating   = parseFloat(item.dataset.rating) || 0;
+    const textOk   = !q || name.includes(q) || skills.includes(q);
+    const verOk    = !verOnly || verified;
+    const ratOk    = rating >= minRat;
+    const show     = textOk && verOk && ratOk;
+    item.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  countEl.textContent = `${visible} providers`;
+}
+searchInput.addEventListener('input', applyFilter);
+verifiedSel.addEventListener('change', applyFilter);
+ratingSel.addEventListener('change', applyFilter);
+</script>
 {% endblock %}

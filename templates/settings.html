@@ -1,109 +1,169 @@
 {% extends "base.html" %}
+{% block title %}Account Settings – Mistribhai{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="row">
-        <div class="col-md-8 mx-auto">
-            <div class="card shadow">
-                <div class="card-body">
-                    <h2 class="card-title mb-4">Account Settings</h2>
-                    
-                    <form method="POST" class="needs-validation" novalidate>
-                        {{ form.csrf_token }}
+<div class="row justify-content-center fade-in-up">
+  <div class="col-md-8 col-lg-7">
 
-                        <div class="mb-4">
-                            <h5>Personal Information</h5>
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Name</label>
-                                {{ form.name(class="form-control") }}
-                            </div>
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                {{ form.email(class="form-control", readonly=True) }}
-                                <small class="text-muted">Email cannot be changed</small>
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <h5>Change Password</h5>
-                            <div class="mb-3">
-                                <label for="current_password" class="form-label">Current Password</label>
-                                {{ form.current_password(class="form-control") }}
-                            </div>
-                            <div class="mb-3">
-                                <label for="new_password" class="form-label">New Password</label>
-                                {{ form.new_password(class="form-control") }}
-                            </div>
-                            <div class="mb-3">
-                                <label for="confirm_password" class="form-label">Confirm New Password</label>
-                                {{ form.confirm_password(class="form-control") }}
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <h5>Notification Settings</h5>
-                            <div class="mb-3">
-                                <div class="form-check">
-                                    {{ form.email_notifications(class="form-check-input") }}
-                                    <label class="form-check-label" for="email_notifications">
-                                        Receive email notifications
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        {% if current_user.role == 'provider' %}
-                        <div class="mb-4">
-                            <h5>Profile Visibility</h5>
-                            <div class="mb-3">
-                                <div class="form-check">
-                                    {{ form.profile_visible(class="form-check-input") }}
-                                    <label class="form-check-label" for="profile_visible">
-                                        Make profile visible to service finders
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        {% endif %}
-
-                        <div class="d-grid gap-2">
-                            {{ form.submit(class="btn btn-primary") }}
-                        </div>
-                    </form>
-
-                    <hr class="my-4">
-
-                    <div class="text-center">
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
-                            Delete Account
-                        </button>
-                    </div>
-                </div>
-            </div>
+    <!-- Page heading -->
+    <div class="dashboard-header mb-4">
+      <div>
+        <div class="dashboard-title" style="font-size:1.4rem;">
+          <i class="fa-solid fa-gear me-2" style="font-size:.85em;"></i>Account Settings
         </div>
+        <div class="dashboard-subtitle">Manage your personal information, password, and preferences</div>
+      </div>
     </div>
+
+    <form method="POST" class="vstack gap-4" id="settings-form">
+      {{ form.csrf_token }}
+
+      <!-- Personal Information -->
+      <div class="card">
+        <div class="card-body">
+          <div class="se-section-title mb-3">
+            <i class="fa-solid fa-user"></i> Personal Information
+          </div>
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label">
+                <i class="fa-solid fa-user me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+                Name
+              </label>
+              {{ form.name(class="form-control") }}
+            </div>
+            <div class="col-12">
+              <label class="form-label">
+                <i class="fa-solid fa-envelope me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+                Email
+              </label>
+              {{ form.email(class="form-control", readonly=True) }}
+              <small class="text-muted d-flex align-items-center gap-1 mt-1">
+                <i class="fa-solid fa-lock" style="font-size:.75em;"></i>
+                Email address cannot be changed
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Change Password -->
+      <div class="card">
+        <div class="card-body">
+          <div class="se-section-title mb-3">
+            <i class="fa-solid fa-lock"></i> Change Password
+          </div>
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label">Current Password</label>
+              {{ form.current_password(class="form-control", placeholder="Enter your current password") }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">New Password</label>
+              {{ form.new_password(class="form-control", placeholder="Create new password") }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Confirm New Password</label>
+              {{ form.confirm_password(class="form-control", placeholder="Repeat new password") }}
+            </div>
+          </div>
+          <div class="text-muted small mt-2">
+            <i class="fa-solid fa-circle-info me-1" style="color:var(--se-blue);"></i>
+            Leave password fields blank if you don't want to change your password.
+          </div>
+        </div>
+      </div>
+
+      <!-- Notification Preferences -->
+      <div class="card">
+        <div class="card-body">
+          <div class="se-section-title mb-3">
+            <i class="fa-solid fa-bell"></i> Notification Preferences
+          </div>
+          <div class="form-check form-switch" style="padding-left:3rem;">
+            {{ form.email_notifications(class="form-check-input", id="email-notif-toggle") }}
+            <label class="form-check-label" for="email-notif-toggle">
+              <span class="fw-semibold">Email Notifications</span>
+              <span class="d-block text-muted small">Receive updates about matches, messages, and account activity</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Visibility (providers only) -->
+      {% if current_user.role == 'provider' %}
+      <div class="card">
+        <div class="card-body">
+          <div class="se-section-title mb-3">
+            <i class="fa-solid fa-eye"></i> Profile Visibility
+          </div>
+          <div class="form-check form-switch" style="padding-left:3rem;">
+            {{ form.profile_visible(class="form-check-input", id="profile-visible-toggle") }}
+            <label class="form-check-label" for="profile-visible-toggle">
+              <span class="fw-semibold">Make Profile Visible</span>
+              <span class="d-block text-muted small">Allow service finders to see your profile in AI matches</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Save button -->
+      <div class="d-flex gap-3">
+        {{ form.submit(class="btn btn-primary px-4") }}
+        <a href="{{ url_for('core.dashboard') }}" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+    </form>
+
+    <!-- Danger Zone -->
+    <div class="card mt-4" style="border-color:rgba(239,68,68,.3) !important;">
+      <div class="card-body">
+        <div class="se-section-title mb-2" style="color:#dc2626;">
+          <i class="fa-solid fa-triangle-exclamation"></i> Danger Zone
+        </div>
+        <p class="text-muted small mb-3">Permanently delete your account and all associated data. This action cannot be undone.</p>
+        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+          data-bs-target="#deleteAccountModal" id="delete-account-btn">
+          <i class="fa-solid fa-trash me-1"></i>Delete My Account
+        </button>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <!-- Delete Account Modal -->
 <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteAccountModalLabel">Delete Account</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete your account? This action cannot be undone.</p>
-                <p class="text-danger"><strong>Warning:</strong> All your data will be permanently deleted.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form action="{{ url_for('delete_account') }}" method="POST" style="display: inline;">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button type="submit" class="btn btn-danger">Delete Account</button>
-                </form>
-            </div>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:var(--border-radius);border:1px solid var(--border-soft);">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold" id="deleteAccountModalLabel">
+          <i class="fa-solid fa-triangle-exclamation text-danger me-2"></i>Delete Account
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-2">Are you absolutely sure? This will permanently delete:</p>
+        <ul class="text-muted small">
+          <li>Your account and profile</li>
+          <li>All skills, posts, and matches</li>
+          <li>All uploaded images</li>
+        </ul>
+        <div class="alert alert-danger mb-0" style="font-size:.87rem;">
+          <i class="fa-solid fa-circle-xmark me-1"></i>
+          <strong>This action is irreversible.</strong>
         </div>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form action="{{ url_for('core.delete_account') }}" method="POST" style="display:inline;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-danger" id="confirm-delete-btn">
+            <i class="fa-solid fa-trash me-1"></i>Yes, Delete My Account
+          </button>
+        </form>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}

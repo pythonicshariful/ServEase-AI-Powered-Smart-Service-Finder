@@ -1,0 +1,59 @@
+{% extends 'admin/layout.html' %}
+{% block admin_content %}
+<div class="card mb-4">
+    <div class="card-body">
+        <h3 class="fw-bold mb-4">Headquarters Dashboard</h3>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white text-center">
+                    <div class="card-body">
+                        <h1 class="display-4 fw-bold">{{ total_users }}</h1>
+                        <p class="mb-0">Total Users</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white text-center">
+                    <div class="card-body">
+                        <h1 class="display-4 fw-bold">{{ active_posts }}</h1>
+                        <p class="mb-0">Active Posts</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white text-center">
+                    <div class="card-body">
+                        <h1 class="display-4 fw-bold">{{ completed_posts }}</h1>
+                        <p class="mb-0">Completed Jobs</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-dark text-center">
+                    <div class="card-body">
+                        <h1 class="display-4 fw-bold">{{ total_messages }}</h1>
+                        <p class="mb-0">Messages Sent</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="fw-bold"><i class="fa-solid fa-wrench me-2"></i>System Maintenance</h5>
+        <p class="text-muted small">When maintenance mode is active, all regular users will see a "We'll be right back" page.</p>
+        <form method="post" action="{{ url_for('admin.toggle_maintenance') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            {% if maintenance_mode %}
+                <button type="submit" class="btn btn-danger">Turn Maintenance Mode OFF</button>
+                <span class="badge bg-danger ms-2">Currently ON</span>
+            {% else %}
+                <button type="submit" class="btn btn-outline-danger">Turn Maintenance Mode ON</button>
+                <span class="badge bg-success ms-2">Currently OFF</span>
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}System Headquarters{% endblock %}
+
+{% block content %}
+<div class="row fade-in-up">
+    <!-- Sidebar -->
+    <div class="col-md-3 mb-4">
+        <div class="list-group">
+            <a href="{{ url_for('admin.dashboard') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
+                <i class="fa-solid fa-gauge me-2"></i> Dashboard
+            </a>
+            <a href="{{ url_for('admin.users') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'admin.users' %}active{% endif %}">
+                <i class="fa-solid fa-users me-2"></i> Users
+            </a>
+            <a href="{{ url_for('admin.providers') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'admin.providers' %}active{% endif %}">
+                <i class="fa-solid fa-user-tie me-2"></i> Providers
+            </a>
+            <a href="{{ url_for('admin.moderation') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'admin.moderation' %}active{% endif %}">
+                <i class="fa-solid fa-shield-halved me-2"></i> Moderation
+            </a>
+            <a href="{{ url_for('admin.broadcast') }}" class="list-group-item list-group-item-action {% if request.endpoint == 'admin.broadcast' %}active{% endif %}">
+                <i class="fa-solid fa-bullhorn me-2"></i> Broadcasts
+            </a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="col-md-9">
+        {% block admin_content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}

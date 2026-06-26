@@ -1,67 +1,172 @@
 {% extends 'base.html' %}
+{% block title %}Provider Dashboard – Mistribhai{% endblock %}
 {% block content %}
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="h4 mb-0">Provider Dashboard</h2>
-    <a href="{{ url_for('provider_best_matches') }}" class="btn btn-primary">View Best Matched Jobs</a>
+
+<!-- Page header -->
+<div class="dashboard-header fade-in-up">
+  <div>
+    <div class="dashboard-title">
+      <i class="fa-solid fa-gauge-high me-2" style="font-size:.85em;"></i>Provider Dashboard
+    </div>
+    <div class="dashboard-subtitle">Manage your profile, skills, and find matched jobs</div>
+  </div>
+  <a href="{{ url_for('provider.best_matches') }}" class="btn btn-primary" id="view-best-matches-btn">
+    <i class="fa-solid fa-wand-magic-sparkles me-2"></i>View Best Matched Jobs
+  </a>
+</div>
+
+<!-- Quick stats -->
+<div class="row g-3 mb-4 fade-in-up fade-in-up-delay-1">
+  <div class="col-sm-4">
+    <div class="quick-stat">
+      <div class="quick-stat-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+      <div>
+        <div class="quick-stat-value">{{ skills|length }}</div>
+        <div class="quick-stat-label">Skills Listed</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="quick-stat">
+      <div class="quick-stat-icon"><i class="fa-solid fa-shield-halved"></i></div>
+      <div>
+        <div class="quick-stat-value">{{ '✓' if provider.verified else '—' }}</div>
+        <div class="quick-stat-label">Verified Status</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="quick-stat">
+      <div class="quick-stat-icon"><i class="fa-solid fa-star"></i></div>
+      <div>
+        <div class="quick-stat-value">{{ provider.rating or '—' }}</div>
+        <div class="quick-stat-label">Rating</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+
+  <!-- Profile summary -->
+  <div class="col-lg-5 fade-in-up fade-in-up-delay-1">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="se-section-title mb-3">
+          <i class="fa-solid fa-id-card"></i> Profile Summary
+        </div>
+
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div style="width:52px;height:52px;border-radius:14px;background:var(--se-gradient);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.4rem;font-weight:800;flex-shrink:0;">
+            {{ current_user.name[0].upper() }}
+          </div>
+          <div>
+            <div class="fw-bold" style="font-size:1.05rem;">{{ current_user.name }}</div>
+            <div class="text-muted small">{{ provider.title or 'No title set' }}</div>
+          </div>
+        </div>
+
+        <p class="text-muted small mb-2" style="line-height:1.6;">
+          {{ provider.description or 'No description yet. Add one below to attract more clients.' }}
+        </p>
+
+        {% if provider.location %}
+        <div class="match-chip d-inline-flex mt-1">
+          <i class="fa-solid fa-location-dot"></i> {{ provider.location }}
+        </div>
+        {% endif %}
+
+        <div class="mt-3">
+          <span class="badge {{ 'badge-verified' if provider.verified else 'bg-secondary' }}">
+            {{ '✓ Verified' if provider.verified else 'Unverified' }}
+          </span>
+        </div>
+
+        <a href="{{ url_for('core.view_profile', user_id=current_user.id) }}"
+          class="btn btn-outline-primary btn-sm mt-3 w-100" id="view-public-profile">
+          <i class="fa-solid fa-arrow-up-right-from-square me-1"></i>View Public Profile
+        </a>
+      </div>
+    </div>
   </div>
 
-  <div class="row g-4">
-    <div class="col-lg-6">
-      <div class="card shadow-sm h-100">
-        <div class="card-body">
-          <h2 class="h4">Provider Profile</h2>
-          <p class="mb-1 text-muted">{{ provider.title or "No title yet" }}</p>
-          <p class="text-muted">{{ provider.description or "No description" }}</p>
-          {% if provider.location %}
-            <p class="text-muted"><strong>Location:</strong> {{ provider.location }}</p>
-          {% endif %}
-          <span class="badge {{ 'bg-success' if provider.verified else 'bg-secondary' }}">{{ 'Verified' if provider.verified else 'Unverified' }}</span>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-6">
-      <div class="card shadow-sm h-100">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <h2 class="h5 mb-0">Skills</h2>
-            <a class="btn btn-sm btn-outline-primary" href="{{ url_for('add_skill') }}">Add Skill</a>
+  <!-- Skills -->
+  <div class="col-lg-7 fade-in-up fade-in-up-delay-2">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="se-section-title">
+            <i class="fa-solid fa-screwdriver-wrench"></i> My Skills
           </div>
-          {% if skills %}
-            <ul class="list-group list-group-flush">
-              {% for s in skills %}
-                <li class="list-group-item">{{ s.skill }}</li>
-              {% endfor %}
-            </ul>
-          {% else %}
-            <p class="text-muted mb-0">No skills added yet.</p>
-          {% endif %}
+          <a class="btn btn-primary btn-sm btn-pill" href="{{ url_for('provider.add_skill') }}" id="add-skill-btn">
+            <i class="fa-solid fa-plus me-1"></i>Add Skill
+          </a>
         </div>
-      </div>
-    </div>
-    <div class="col-12">
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <h2 class="h5">Edit Profile</h2>
-          <form method="post" action="{{ url_for('provider_profile') }}" class="vstack gap-3 mt-2">
-            {{ form.hidden_tag() }}
-            <div>
-              <label class="form-label">{{ form.title.label.text }}</label>
-              {{ form.title(class_='form-control', placeholder='e.g., Electrician, Plumber') }}
-            </div>
-            <div>
-              <label class="form-label">{{ form.description.label.text }}</label>
-              {{ form.description(class_='form-control', rows='4', placeholder='Short summary of services, specialization, etc.') }}
-            </div>
-            <div>
-              <label class="form-label">{{ form.location.label.text }}</label>
-              {{ form.location(class_='form-control', placeholder='City, Country (optional)') }}
-            </div>
-            <div>
-              {{ form.submit(class_='btn btn-primary') }}
-            </div>
-          </form>
+
+        {% if skills %}
+        <div class="skills-container">
+          {% for s in skills %}
+          <span class="skill-badge-pill">
+            <i class="fa-solid fa-check" style="font-size:.65rem;opacity:.7;"></i>
+            {{ s.skill }}
+            {% if s.proficiency %}
+            <span class="proficiency {{ s.proficiency.lower() }}">{{ s.proficiency }}</span>
+            {% endif %}
+          </span>
+          {% endfor %}
         </div>
+        {% else %}
+        <div class="text-center py-4">
+          <i class="fa-solid fa-screwdriver-wrench" style="font-size:2rem;color:var(--border-soft);"></i>
+          <p class="text-muted mt-2 mb-0 small">No skills added yet.<br>Add skills to get matched with jobs.</p>
+        </div>
+        {% endif %}
       </div>
     </div>
   </div>
+
+  <!-- Edit profile form -->
+  <div class="col-12 fade-in-up fade-in-up-delay-3">
+    <div class="card">
+      <div class="card-body">
+        <div class="se-section-title mb-3">
+          <i class="fa-solid fa-pen-to-square"></i> Edit Profile
+        </div>
+
+        <form method="post" action="{{ url_for('provider.profile') }}" class="row g-3">
+          {{ form.hidden_tag() }}
+
+          <div class="col-md-6">
+            <label class="form-label">
+              <i class="fa-solid fa-briefcase me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+              {{ form.title.label.text }}
+            </label>
+            {{ form.title(class_='form-control', placeholder='e.g., Electrician, Plumber') }}
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">
+              <i class="fa-solid fa-location-dot me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+              {{ form.location.label.text }}
+            </label>
+            {{ form.location(class_='form-control', placeholder='City, Country') }}
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">
+              <i class="fa-solid fa-align-left me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+              {{ form.description.label.text }}
+            </label>
+            {{ form.description(class_='form-control', rows='4', placeholder='Short summary of services, specialization, experience...') }}
+          </div>
+
+          <div class="col-12">
+            {{ form.submit(class_='btn btn-primary px-4') }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
 {% endblock %}

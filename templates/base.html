@@ -4,80 +4,232 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>InstantFix</title>
+  <meta name="description" content="Mistribhai – AI-Powered Smart Service Finder. Connect with verified service professionals instantly using AI matching.">
+  <meta name="theme-color" content="#7c3aed">
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+  <title>{% block title %}Mistribhai – AI-Powered Smart Service Finder{% endblock %}</title>
+
+  <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- App CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+  {% block head %}{% endblock %}
 </head>
 
-<body class="bg-light"
-  style="font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<body>
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar navbar-expand-lg" id="mainNav">
     <div class="container">
-      <a class="navbar-brand fw-bold" href="{{ url_for('home') }}">InstantFix</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+      <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ url_for('core.home') }}">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" height="28" class="me-2" style="border-radius:6px;"> Mistribhai
+      </a>
+      <div class="d-flex align-items-center gap-2 d-lg-none">
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('messages.inbox') }}" class="btn btn-outline-light btn-sm btn-pill position-relative" id="nav-messages-mobile">
+          <i class="fa-solid fa-envelope"></i>
+        </a>
+        {% endif %}
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navbarNav" aria-label="Toggle navigation" style="color:rgba(255,255,255,.7);">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           {% if current_user.is_authenticated %}
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a></li>
-          {% endif %}
-        </ul>
-        <ul class="navbar-nav">
-          {% if current_user.is_authenticated %}
           <li class="nav-item">
-            <a href="{{ url_for('view_profile', user_id=current_user.id) }}" class="nav-link">
-              {% if current_user.profile_image %}
-              <img src="{{ url_for('static', filename=current_user.profile_image) }}" alt="Profile"
-                class="rounded-circle" style="width: 24px; height: 24px; object-fit: cover;">
-              {% endif %}
-              {{ current_user.name }}
+            <a class="nav-link" href="{{ url_for('core.dashboard') }}">
+              <i class="fa-solid fa-gauge-high me-1" style="font-size:.8em;opacity:.7;"></i>Dashboard
             </a>
           </li>
-          <li class="nav-item"><a class="btn btn-outline-light btn-sm ms-2" href="{{ url_for('logout') }}">Logout</a>
+          {% if current_user.role == 'admin' %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('admin.dashboard') }}">
+              <i class="fa-solid fa-shield-halved me-1" style="font-size:.8em;color:var(--se-purple);"></i>Admin Headquarters
+            </a>
+          </li>
+          {% endif %}
+          {% endif %}
+        </ul>
+        <ul class="navbar-nav align-items-lg-center gap-2">
+          {% if current_user.is_authenticated %}
+          <li class="nav-item">
+            <!-- Messages icon with unread badge -->
+            <a href="{{ url_for('messages.inbox') }}" class="nav-link position-relative d-none d-lg-flex align-items-center" id="nav-messages">
+              <i class="fa-solid fa-envelope me-1"></i>Messages
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ url_for('core.view_profile', user_id=current_user.id) }}" class="nav-link d-flex align-items-center gap-2">
+              {% if current_user.profile_image %}
+              <img src="{{ url_for('static', filename=current_user.profile_image) }}" alt="Profile"
+                class="rounded-circle" style="width:28px;height:28px;object-fit:cover;border:2px solid rgba(124,58,237,.5);">
+              {% else %}
+              <span style="width:28px;height:28px;background:var(--se-gradient);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:.75rem;font-weight:700;flex-shrink:0;">
+                {{ current_user.name[0].upper() }}
+              </span>
+              {% endif %}
+              <span>{{ current_user.name }}</span>
+              {% if not current_user.email_verified %}
+              <span class="badge bg-warning text-dark" style="font-size:.65rem;">Unverified</span>
+              {% else %}
+              <span class="pulse-dot"></span>
+              {% endif %}
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-outline-light btn-pill btn-sm" href="{{ url_for('auth.logout') }}">
+              <i class="fa-solid fa-right-from-bracket me-1"></i>Logout
+            </a>
           </li>
           {% else %}
-          <li class="nav-item me-2"><a class="btn btn-outline-light btn-sm" href="{{ url_for('login') }}">Login</a></li>
-          <li class="nav-item"><a class="btn btn-primary btn-sm" href="{{ url_for('register') }}">Register</a></li>
+          <li class="nav-item"><a class="btn btn-outline-light btn-pill btn-sm" href="{{ url_for('auth.login') }}">Sign In</a></li>
+          <li class="nav-item"><a class="btn btn-primary btn-pill btn-sm" href="{{ url_for('auth.register') }}">Get Started <i class="fa-solid fa-arrow-right ms-1" style="font-size:.8em;"></i></a></li>
           {% endif %}
         </ul>
       </div>
     </div>
   </nav>
 
-  <main class="container py-4">
+  <!-- ===== EMAIL VERIFICATION BANNER ===== -->
+  {% if current_user.is_authenticated and not current_user.email_verified %}
+  <div class="alert alert-warning alert-dismissible mb-0 rounded-0 text-center" style="font-size:.88rem;">
+    <i class="fa-solid fa-triangle-exclamation me-1"></i>
+    Your email is not verified.
+    <a href="{{ url_for('auth.resend_verification') }}" class="fw-bold ms-1">Resend verification email</a>
+    <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+
+  <!-- ===== FLASH MESSAGES ===== -->
+  <div class="container mt-3" id="flash-container">
     {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    {% for category, msg in messages %}
-    <div
-      class="alert alert-{{ 'danger' if category == 'danger' else ('success' if category == 'success' else ('info' if category == 'info' else 'secondary')) }} alert-dismissible fade show"
-      role="alert">
+    {% if messages %}{% for category, msg in messages %}
+    <div class="alert alert-{{ 'danger' if category == 'danger' else ('success' if category == 'success' else ('info' if category == 'info' else ('warning' if category == 'warning' else 'secondary'))) }} alert-dismissible fade show fade-in-up" role="alert">
+      {% if category == 'success' %}<i class="fa-solid fa-circle-check me-2"></i>
+      {% elif category == 'danger' %}<i class="fa-solid fa-circle-xmark me-2"></i>
+      {% elif category == 'warning' %}<i class="fa-solid fa-triangle-exclamation me-2"></i>
+      {% else %}<i class="fa-solid fa-circle-info me-2"></i>{% endif %}
       {{ msg }}
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-    {% endfor %}
-    {% endif %}
+    {% endfor %}{% endif %}
     {% endwith %}
+  </div>
+
+  <!-- ===== SSE TOAST CONTAINER ===== -->
+  <div id="sse-toasts" style="position:fixed;bottom:80px;right:1rem;z-index:2000;display:flex;flex-direction:column;gap:.5rem;max-width:320px;"></div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="container py-4" style="padding-bottom:5rem;">
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="border-top py-4 mt-5 bg-white">
-    <div class="container text-center text-muted small">
-      © {{ 2025 }} InstantFix. All rights reserved.
+  <!-- ===== MOBILE BOTTOM NAV ===== -->
+  {% if current_user.is_authenticated %}
+  <nav class="d-lg-none mobile-bottom-nav">
+    <a href="{{ url_for('core.dashboard') }}" class="mobile-nav-item" id="mobile-nav-dashboard">
+      <i class="fa-solid fa-gauge-high"></i><span>Dashboard</span>
+    </a>
+    {% if current_user.role == 'finder' %}
+    <a href="{{ url_for('finder.create_post') }}" class="mobile-nav-item" id="mobile-nav-post">
+      <i class="fa-solid fa-plus-circle"></i><span>Post Job</span>
+    </a>
+    {% else %}
+    <a href="{{ url_for('provider.best_matches') }}" class="mobile-nav-item" id="mobile-nav-matches">
+      <i class="fa-solid fa-wand-magic-sparkles"></i><span>Matches</span>
+    </a>
+    {% endif %}
+    <a href="{{ url_for('messages.inbox') }}" class="mobile-nav-item" id="mobile-nav-messages">
+      <i class="fa-solid fa-envelope"></i><span>Messages</span>
+    </a>
+    <a href="{{ url_for('core.view_profile', user_id=current_user.id) }}" class="mobile-nav-item" id="mobile-nav-profile">
+      <i class="fa-solid fa-user"></i><span>Profile</span>
+    </a>
+    <a href="{{ url_for('core.settings') }}" class="mobile-nav-item" id="mobile-nav-settings">
+      <i class="fa-solid fa-gear"></i><span>Settings</span>
+    </a>
+  </nav>
+  {% endif %}
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="d-none d-lg-block">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-4 mb-3 mb-md-0">
+          <div class="footer-brand d-flex align-items-center"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" height="24" class="me-2" style="border-radius:4px;"> Mistribhai</div>
+          <div class="footer-tagline">AI-Powered Smart Service Finder</div>
+        </div>
+        <div class="col-md-4 text-center mb-3 mb-md-0">
+          <div class="d-flex justify-content-center gap-3">
+            <a href="{{ url_for('core.home') }}" class="footer-copy text-decoration-none">Home</a>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('core.dashboard') }}" class="footer-copy text-decoration-none">Dashboard</a>
+            <a href="{{ url_for('messages.inbox') }}" class="footer-copy text-decoration-none">Messages</a>
+            {% else %}
+            <a href="{{ url_for('auth.register') }}" class="footer-copy text-decoration-none">Register</a>
+            <a href="{{ url_for('auth.login') }}" class="footer-copy text-decoration-none">Login</a>
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-md-4 text-md-end">
+          <div class="footer-copy">&copy; 2025 Mistribhai.</div>
+        </div>
+      </div>
     </div>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
     crossorigin="anonymous"></script>
+
+  <script>
+    // Navbar scroll shadow
+    const nav = document.getElementById('mainNav');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 10));
+
+    {% if current_user.is_authenticated %}
+    // SSE – real-time notifications
+    const toastContainer = document.getElementById('sse-toasts');
+    function showToast(message, type) {
+      const div = document.createElement('div');
+      const icons = { application: 'fa-briefcase', review: 'fa-star', message: 'fa-envelope', info: 'fa-circle-info' };
+      div.innerHTML = `
+        <div style="background:white;border:1px solid var(--border-soft);border-radius:12px;padding:.9rem 1.1rem;
+                    box-shadow:var(--shadow-md);display:flex;align-items:center;gap:.75rem;animation:fadeInUp .3s ease;">
+          <span style="color:var(--se-purple);font-size:1.1rem;"><i class="fa-solid ${icons[type]||'fa-bell'}"></i></span>
+          <span style="font-size:.88rem;color:var(--text-primary);">${message}</span>
+        </div>`;
+      toastContainer.appendChild(div);
+      setTimeout(() => div.remove(), 5000);
+    }
+
+    const evtSource = new EventSource("{{ url_for('core.notification_stream') }}");
+    evtSource.onmessage = (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        showToast(data.message, data.type);
+        // Mark as read
+        fetch(`{{ url_for('core.mark_notification_read', notif_id=0) }}`.replace('/0', `/${data.id}`), { method: 'POST' });
+      } catch(_) {}
+    };
+    evtSource.onerror = () => evtSource.close();
+    {% endif %}
+
+    // Register service worker (PWA)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register("{{ url_for('static', filename='sw.js') }}")
+        .catch(err => console.warn('SW registration failed:', err));
+    }
+  </script>
   {% block scripts %}{% endblock %}
 </body>
-
 </html>

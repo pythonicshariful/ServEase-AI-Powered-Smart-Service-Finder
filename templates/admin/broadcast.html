@@ -1,0 +1,43 @@
+{% extends 'admin/layout.html' %}
+{% block admin_content %}
+<div class="card mb-4">
+    <div class="card-body">
+        <h3 class="fw-bold mb-4">Broadcast Announcement</h3>
+        <p class="text-muted">Send a message to all users on the platform. (This will be logged in the announcements table).</p>
+        
+        <form method="post" action="{{ url_for('admin.broadcast') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="mb-3">
+                <label class="form-label fw-bold">Title</label>
+                <input type="text" name="title" class="form-control" required placeholder="e.g. Scheduled Maintenance Notice">
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Message</label>
+                <textarea name="message" class="form-control" rows="4" required placeholder="Type your broadcast message here..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane me-2"></i>Send Broadcast</button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="fw-bold mb-3">Past Broadcasts</h5>
+        {% if announcements %}
+            <div class="list-group">
+                {% for ann in announcements %}
+                <div class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1 fw-bold">{{ ann.title }}</h6>
+                        <small class="text-muted">{{ ann.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                    </div>
+                    <p class="mb-1">{{ ann.message }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted mb-0">No broadcasts sent yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

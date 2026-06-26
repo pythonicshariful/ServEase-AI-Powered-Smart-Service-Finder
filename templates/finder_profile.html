@@ -2,7 +2,7 @@
 {% block content %}
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="h4 mb-0">My Profile</h2>
-    <a href="{{ url_for('finder_dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+    <a href="{{ url_for('finder.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
   </div>
 
   <div class="row g-4">
@@ -26,7 +26,7 @@
       <div class="card shadow-sm">
         <div class="card-body">
           <h2 class="h5">Edit Profile</h2>
-          <form method="post" action="{{ url_for('finder_profile') }}" class="vstack gap-3 mt-2">
+          <form method="post" action="{{ url_for('finder.profile') }}" class="vstack gap-3 mt-2">
             {{ form.hidden_tag() }}
             <div>
               <label class="form-label">{{ form.bio.label.text }}</label>

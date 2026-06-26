@@ -1,40 +1,89 @@
 {% extends 'base.html' %}
+{% block title %}Create Job Post – Mistribhai{% endblock %}
 {% block content %}
-  <div class="row justify-content-center">
-    <div class="col-lg-8">
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <h2 class="h4">Create Post</h2>
-          <form method="post" class="vstack gap-3 mt-2">
-            {{ form.hidden_tag() }}
-            <div>
-              <label class="form-label">{{ form.title.label.text }}</label>
-              {{ form.title(class_='form-control', placeholder='What service do you need?') }}
-            </div>
-            <div>
-              <label class="form-label">{{ form.description.label.text }}</label>
-              {{ form.description(class_='form-control', rows='6', placeholder='Describe the task, scope, timeline...') }}
-            </div>
-            <div>
-              <label class="form-label">{{ form.location.label.text }}</label>
-              {{ form.location(class_='form-control', placeholder='City/Area') }}
-            </div>
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label">{{ form.budget_min.label.text }}</label>
-                {{ form.budget_min(class_='form-control') }}
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">{{ form.budget_max.label.text }}</label>
-                {{ form.budget_max(class_='form-control') }}
-              </div>
-            </div>
-            <div>
-              {{ form.submit(class_='btn btn-primary') }}
-            </div>
-          </form>
+
+<div class="row justify-content-center fade-in-up">
+  <div class="col-lg-8">
+
+    <!-- Page heading -->
+    <div class="d-flex align-items-center gap-3 mb-4">
+      <a href="{{ url_for('finder.dashboard') }}" class="btn btn-outline-secondary btn-sm btn-pill" id="back-btn">
+        <i class="fa-solid fa-arrow-left me-1"></i>Back
+      </a>
+      <div>
+        <div class="dashboard-title" style="font-size:1.4rem; margin-bottom:0;">
+          <i class="fa-solid fa-file-circle-plus me-2" style="font-size:.85em;"></i>Create a Job Post
         </div>
+        <div class="dashboard-subtitle">Describe what you need — AI will find the best matches for you</div>
       </div>
     </div>
+
+    <div class="card">
+      <div class="card-body">
+        <form method="post" class="row g-3" id="create-post-form">
+          {{ form.hidden_tag() }}
+
+          <div class="col-12">
+            <label class="form-label">
+              <i class="fa-solid fa-heading me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+              {{ form.title.label.text }}
+            </label>
+            {{ form.title(class_='form-control form-control-lg', placeholder='What service do you need? e.g., Fix leaking pipe') }}
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">
+              <i class="fa-solid fa-align-left me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+              {{ form.description.label.text }}
+            </label>
+            {{ form.description(class_='form-control', rows='6', placeholder='Describe the task in detail — scope, timeline, materials needed, any specific requirements...') }}
+            <div class="text-muted small mt-1">
+              <i class="fa-solid fa-lightbulb me-1" style="color:#d97706;"></i>
+              More detail = better AI matching. Include keywords like "electrical", "plumbing", "painting", etc.
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">
+              <i class="fa-solid fa-location-dot me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+              {{ form.location.label.text }}
+            </label>
+            {{ form.location(class_='form-control', placeholder='City/Area where work is needed') }}
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">
+              <i class="fa-solid fa-bangladeshi-taka-sign me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+              {{ form.budget_min.label.text }}
+            </label>
+            {{ form.budget_min(class_='form-control', placeholder='Min BDT') }}
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">
+              <i class="fa-solid fa-bangladeshi-taka-sign me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+              {{ form.budget_max.label.text }}
+            </label>
+            {{ form.budget_max(class_='form-control', placeholder='Max BDT') }}
+          </div>
+
+          <!-- AI match notice -->
+          <div class="col-12">
+            <div class="alert alert-info d-flex align-items-center gap-2 mb-0" style="padding:.75rem 1rem;">
+              <span class="ai-badge" style="font-size:.72rem;"><i class="fa-solid fa-wand-magic-sparkles me-1"></i>AI</span>
+              After posting, our advanced AI will instantly rank the best-matched providers for you.
+            </div>
+          </div>
+
+          <div class="col-12 d-flex gap-2">
+            {{ form.submit(class_='btn btn-primary px-4') }}
+            <a href="{{ url_for('finder.dashboard') }}" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
   </div>
+</div>
+
 {% endblock %}

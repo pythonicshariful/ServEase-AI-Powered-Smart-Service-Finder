@@ -14,10 +14,19 @@ instance/
 *.db
 *.sqlite3
 
+# Environment secrets – NEVER commit this!
+.env
+
+# Uploaded user files
+static/uploads/
+
 # OS/editor noise
 .DS_Store
 Thumbs.db
 .idea/
 .vscode/
 
-
+# Tests
+.pytest_cache/
+.coverage
+htmlcov/

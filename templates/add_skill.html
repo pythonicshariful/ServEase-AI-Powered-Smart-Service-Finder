@@ -1,30 +1,66 @@
 {% extends 'base.html' %}
+{% block title %}Add Skill – Mistribhai{% endblock %}
 {% block content %}
-  <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <h2 class="h5">Add Skill</h2>
-          <form method="post" class="vstack gap-3 mt-2">
-            {{ form.hidden_tag() }}
-            <div>
-              <label class="form-label">{{ form.skill.label.text }}</label>
-              {{ form.skill(class_='form-control', placeholder='e.g., Plumbing') }}
-            </div>
-            <div>
-              <label class="form-label">{{ form.proficiency.label.text }}</label>
-              {{ form.proficiency(class_='form-select') }}
-            </div>
-            <div>
-              <label class="form-label">{{ form.years_experience.label.text }}</label>
-              {{ form.years_experience(class_='form-control', placeholder='e.g., 5') }}
-            </div>
-            <div>
-              {{ form.submit(class_='btn btn-primary') }}
-            </div>
-          </form>
+
+<div class="row justify-content-center fade-in-up">
+  <div class="col-md-6 col-lg-5">
+
+    <div class="d-flex align-items-center gap-3 mb-4">
+      <a href="{{ url_for('provider.dashboard') }}" class="btn btn-outline-secondary btn-sm btn-pill" id="back-btn">
+        <i class="fa-solid fa-arrow-left me-1"></i>Back
+      </a>
+      <div>
+        <div class="dashboard-title" style="font-size:1.3rem;margin-bottom:0;">
+          <i class="fa-solid fa-screwdriver-wrench me-2" style="font-size:.85em;"></i>Add a Skill
         </div>
+        <div class="dashboard-subtitle">Showcase your expertise to get better job matches</div>
       </div>
     </div>
+
+    <div class="card">
+      <div class="card-body">
+        <form method="post" class="vstack gap-3" id="add-skill-form">
+          {{ form.hidden_tag() }}
+
+          <div>
+            <label class="form-label">
+              <i class="fa-solid fa-tag me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+              {{ form.skill.label.text }}
+            </label>
+            {{ form.skill(class_='form-control', placeholder='e.g., Plumbing, Electrical, Painting') }}
+          </div>
+
+          <div>
+            <label class="form-label">
+              <i class="fa-solid fa-chart-line me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+              {{ form.proficiency.label.text }}
+            </label>
+            {{ form.proficiency(class_='form-select') }}
+            <!-- Proficiency hint -->
+            <div class="d-flex gap-2 mt-2 flex-wrap">
+              <span class="proficiency beginner" style="font-size:.78rem;padding:3px 10px;">Beginner</span>
+              <span class="proficiency intermediate" style="font-size:.78rem;padding:3px 10px;">Intermediate</span>
+              <span class="proficiency expert" style="font-size:.78rem;padding:3px 10px;">Expert</span>
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label">
+              <i class="fa-solid fa-calendar me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+              {{ form.years_experience.label.text }}
+            </label>
+            {{ form.years_experience(class_='form-control', placeholder='e.g., 5') }}
+          </div>
+
+          <div class="d-flex gap-2">
+            {{ form.submit(class_='btn btn-primary px-4') }}
+            <a href="{{ url_for('provider.dashboard') }}" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
   </div>
+</div>
+
 {% endblock %}

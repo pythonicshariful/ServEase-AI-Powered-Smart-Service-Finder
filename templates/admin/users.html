@@ -1,0 +1,53 @@
+{% extends 'admin/layout.html' %}
+{% block admin_content %}
+<div class="card">
+    <div class="card-body">
+        <h3 class="fw-bold mb-4">User Management</h3>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td>{{ u.id }}</td>
+                        <td>{{ u.name }}</td>
+                        <td>{{ u.email }}</td>
+                        <td><span class="badge bg-secondary">{{ u.role }}</span></td>
+                        <td>
+                            {% if u.is_suspended %}
+                                <span class="badge bg-danger">Suspended</span>
+                            {% else %}
+                                <span class="badge bg-success">Active</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <form method="post" action="{{ url_for('admin.toggle_suspend', user_id=u.id) }}">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button class="btn btn-sm {% if u.is_suspended %}btn-success{% else %}btn-warning{% endif %}">
+                                        {% if u.is_suspended %}Unsuspend{% else %}Suspend{% endif %}
+                                    </button>
+                                </form>
+                                <form method="post" action="{{ url_for('admin.delete_user', user_id=u.id) }}" onsubmit="return confirm('WARNING: Are you sure you want to permanently delete this user?');">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

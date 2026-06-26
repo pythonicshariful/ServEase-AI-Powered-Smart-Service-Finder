@@ -1,31 +1,113 @@
 {% extends 'base.html' %}
+{% block title %}My Dashboard – Mistribhai{% endblock %}
 {% block content %}
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="h4 mb-0">Finder Dashboard</h2>
-    <div>
-      <a href="{{ url_for('finder_profile') }}" class="btn btn-outline-primary me-2">My Profile</a>
-      <a href="{{ url_for('create_post') }}" class="btn btn-primary">Create New Service Post</a>
-    </div>
-  </div>
 
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <h3 class="h5">Your Posts</h3>
-      {% if posts %}
-        <div class="list-group list-group-flush">
-          {% for p in posts %}
-            <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" href="{{ url_for('view_matches', post_id=p.id) }}">
-              <div>
-                <div class="fw-semibold">{{ p.title }}</div>
-                <div class="small text-muted">Status: {{ p.status }}</div>
-              </div>
-              <span class="text-decoration-underline">View Matches</span>
-            </a>
-          {% endfor %}
-        </div>
-      {% else %}
-        <p class="text-muted mb-0">No posts yet.</p>
-      {% endif %}
+<!-- Page header -->
+<div class="dashboard-header fade-in-up">
+  <div>
+    <div class="dashboard-title">
+      <i class="fa-solid fa-gauge-high me-2" style="font-size:.85em;"></i>Finder Dashboard
+    </div>
+    <div class="dashboard-subtitle">Post jobs and discover the best matched service providers</div>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('finder.profile') }}" class="btn btn-outline-secondary" id="my-profile-btn">
+      <i class="fa-solid fa-user me-1"></i>My Profile
+    </a>
+    <a href="{{ url_for('finder.create_post') }}" class="btn btn-primary" id="create-post-btn">
+      <i class="fa-solid fa-plus me-1"></i>New Post
+    </a>
+  </div>
+</div>
+
+<!-- Quick stats -->
+<div class="row g-3 mb-4 fade-in-up fade-in-up-delay-1">
+  <div class="col-sm-4">
+    <div class="quick-stat">
+      <div class="quick-stat-icon"><i class="fa-solid fa-file-lines"></i></div>
+      <div>
+        <div class="quick-stat-value">{{ posts|length }}</div>
+        <div class="quick-stat-label">Total Posts</div>
+      </div>
     </div>
   </div>
+  <div class="col-sm-4">
+    <div class="quick-stat">
+      <div class="quick-stat-icon"><i class="fa-solid fa-folder-open"></i></div>
+      <div>
+        <div class="quick-stat-value">{{ posts|selectattr('status','equalto','open')|list|length }}</div>
+        <div class="quick-stat-label">Open Posts</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="quick-stat">
+      <div class="quick-stat-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+      <div>
+        <div class="quick-stat-value">AI</div>
+        <div class="quick-stat-label">Smart Matching</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Posts card -->
+<div class="card fade-in-up fade-in-up-delay-2">
+  <div class="card-body">
+    <div class="se-section-title mb-3">
+      <i class="fa-solid fa-file-lines"></i> Your Service Posts
+    </div>
+
+    {% if posts %}
+    <div class="list-group list-group-flush" style="border-radius:var(--border-radius-sm);overflow:hidden;">
+      {% for p in posts %}
+      <a class="list-group-item list-group-item-action" href="{{ url_for('view_matches', post_id=p.id) }}"
+        id="post-{{ p.id }}">
+        <div class="match-card-inner">
+          <div class="flex-grow-1">
+            <div class="match-name">{{ p.title }}</div>
+            {% if p.description %}
+            <div class="match-title">{{ p.description[:100] }}{{ '...' if p.description|length > 100 }}</div>
+            {% endif %}
+            <div class="match-meta mt-2">
+              <span class="post-status {{ p.status }}">{{ p.status|capitalize }}</span>
+              {% if p.location %}
+              <span class="match-chip">
+                <i class="fa-solid fa-location-dot"></i> {{ p.location }}
+              </span>
+              {% endif %}
+              {% if p.budget_min or p.budget_max %}
+              <span class="match-chip">
+                <i class="fa-solid fa-bangladeshi-taka-sign"></i>
+                {{ p.budget_min or 0 }}–{{ p.budget_max or '?' }} BDT
+              </span>
+              {% endif %}
+              {% if p.created_at %}
+              <span class="match-chip">
+                <i class="fa-regular fa-clock"></i> {{ p.created_at | timeago }}
+              </span>
+              {% endif %}
+            </div>
+          </div>
+          <div class="text-end flex-shrink-0">
+            <span class="badge badge-gradient">
+              <i class="fa-solid fa-wand-magic-sparkles me-1"></i>View Matches
+            </span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+      <i class="fa-solid fa-file-circle-plus" style="font-size:3rem;color:var(--border-soft);"></i>
+      <p class="text-muted mt-3 mb-4">No posts yet. Create your first job post and let AI find the best providers!</p>
+      <a href="{{ url_for('finder.create_post') }}" class="btn btn-primary" id="create-first-post">
+        <i class="fa-solid fa-plus me-2"></i>Create Your First Post
+      </a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
 {% endblock %}

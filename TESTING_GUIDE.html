@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mistribhai - Full Testing Guide</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        .header-banner {
+            background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .role-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        .role-card .card-header {
+            font-weight: bold;
+            font-size: 1.25rem;
+            padding: 1rem 1.5rem;
+            border-bottom: none;
+        }
+        .header-finder { background-color: #0ea5e9; color: white; }
+        .header-provider { background-color: #10b981; color: white; }
+        .header-admin { background-color: #8b5cf6; color: white; }
+        
+        .credentials-box {
+            background-color: #f8fafc;
+            border-left: 4px solid #cbd5e1;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 8px 8px 0;
+        }
+        .step-list {
+            padding-left: 1.5rem;
+        }
+        .step-list li {
+            margin-bottom: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-banner text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold"><i class="fa-solid fa-bolt-lightning text-warning me-2"></i>Mistribhai Testing Guide</h1>
+            <p class="lead mb-0">A complete walkthrough to test all features of the AI-Powered Smart Service Finder.</p>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        
+        <!-- INTRO -->
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <p class="text-muted" style="font-size: 1.1rem;">
+                    This guide provides step-by-step instructions on how to simulate a complete lifecycle on the Mistribhai platform. 
+                    You will test the system from three different perspectives: the <strong>Finder</strong>, the <strong>Provider</strong>, and the <strong>Headquarters (Admin)</strong>.
+                </p>
+                <hr style="max-width: 200px; margin: 2rem auto;">
+            </div>
+        </div>
+
+        <div class="row">
+            
+            <!-- SERVICE FINDER -->
+            <div class="col-lg-12">
+                <div class="card role-card">
+                    <div class="card-header header-finder">
+                        <i class="fa-solid fa-magnifying-glass me-2"></i> 1. The Service Finder (Client)
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="credentials-box" style="border-left-color: #0ea5e9;">
+                            <h6 class="fw-bold mb-2">Demo Credentials:</h6>
+                            <p class="mb-1"><strong>Email:</strong> finder@example.com</p>
+                            <p class="mb-0"><strong>Password:</strong> 1234</p>
+                        </div>
+                        <h5 class="fw-bold">What to test:</h5>
+                        <ul class="step-list">
+                            <li><strong>Log In:</strong> Go to the Sign In page and log in with the Finder credentials.</li>
+                            <li><strong>Update Profile:</strong> Navigate to the <em>Profile</em> section. Upload a profile picture, add a bio, and fill out company details.</li>
+                            <li><strong>Post a Job:</strong> Click <em>Post a Job</em> (or the plus icon on mobile). Fill out a title, detailed description, location, and budget. Submit the job.</li>
+                            <li><strong>Check AI Matches:</strong> After posting, click <em>View Matches</em> on your job. You should see a list of Providers ranked by the Gemini AI based on how well their skills match your job description.</li>
+                            <li><strong>Message a Provider:</strong> Click on a matched Provider's profile and click <em>Message</em> to initiate a chat.</li>
+                            <li><strong>Review Applications:</strong> When a Provider applies to your job, click <em>View Applications</em> on your dashboard and <strong>Accept</strong> their application.</li>
+                            <li><strong>Leave a Review:</strong> Once a job is accepted and finished, mark it as completed and leave a 1-5 star review for the Provider.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SERVICE PROVIDER -->
+            <div class="col-lg-12">
+                <div class="card role-card">
+                    <div class="card-header header-provider">
+                        <i class="fa-solid fa-toolbox me-2"></i> 2. The Service Provider (Professional)
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="credentials-box" style="border-left-color: #10b981;">
+                            <h6 class="fw-bold mb-2">Demo Credentials:</h6>
+                            <p class="mb-1"><strong>Email:</strong> prov@example.com</p>
+                            <p class="mb-0"><strong>Password:</strong> 1234</p>
+                        </div>
+                        <h5 class="fw-bold">What to test:</h5>
+                        <ul class="step-list">
+                            <li><strong>Log In:</strong> Log out of the Finder account and log in with the Provider credentials.</li>
+                            <li><strong>Build Your Portfolio:</strong> Go to <em>Profile</em>. Add your Business Name, Hourly Rate, and upload Portfolio Images so clients can see your work.</li>
+                            <li><strong>Add Skills:</strong> On your Dashboard, find the <em>My Skills</em> section. Add specific skills (e.g., "Plumbing", "Electrical") and set your proficiency level. The AI uses these to match you!</li>
+                            <li><strong>Find Jobs:</strong> Click <em>Matches</em> in the navigation bar. You will see open jobs that the AI thinks you are a good fit for.</li>
+                            <li><strong>Apply to a Job:</strong> Click on the job the Finder just posted, and click <strong>Apply to Job</strong>.</li>
+                            <li><strong>Respond to Messages:</strong> Go to your <em>Inbox</em> to respond to any real-time messages sent by the Finder.</li>
+                            <li><strong>Check Reviews:</strong> Once the Finder leaves a review, go to your Public Profile to see your new rating and review comments.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SYSTEM HEADQUARTERS -->
+            <div class="col-lg-12">
+                <div class="card role-card">
+                    <div class="card-header header-admin">
+                        <i class="fa-solid fa-shield-halved me-2"></i> 3. System Headquarters (Admin)
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="credentials-box" style="border-left-color: #8b5cf6;">
+                            <h6 class="fw-bold mb-2">Demo Credentials:</h6>
+                            <p class="mb-1"><strong>Email:</strong> prov@example.com</p>
+                            <p class="mb-0"><strong>Password:</strong> 1234</p>
+                            <small class="text-muted"><em>(Note: We have elevated the demo provider account to also have Admin privileges for testing purposes.)</em></small>
+                        </div>
+                        <h5 class="fw-bold">What to test:</h5>
+                        <ul class="step-list">
+                            <li><strong>Access Headquarters:</strong> Log in as <em>prov@example.com</em>. In the top navigation bar, click the purple <strong>Admin Headquarters</strong> button.</li>
+                            <li><strong>Dashboard Metrics:</strong> View the real-time statistics for Total Users, Active Posts, and Messages.</li>
+                            <li><strong>Maintenance Mode:</strong> Click the <strong>Turn Maintenance Mode ON</strong> button. Open a private/incognito window (so you are not logged in as an admin) and try to visit the site. You should see the "We'll be right back" page. Turn it back off when done.</li>
+                            <li><strong>User Management:</strong> Go to the <em>Users</em> tab. Try suspending a test user (create a dummy account first if needed). Suspended users will not be able to log in.</li>
+                            <li><strong>Provider Verification:</strong> Go to the <em>Providers</em> tab. Click <strong>Verify</strong> on a provider. When you view their public profile later, they will have a green "Verified" checkmark.</li>
+                            <li><strong>Content Moderation:</strong> Go to the <em>Moderation</em> tab. Find the job post or review you created earlier and click <strong>Hide</strong>. Verify it disappears from public view.</li>
+                            <li><strong>Global Broadcasts:</strong> Go to the <em>Broadcasts</em> tab. Create a new announcement (e.g., "Welcome to Mistribhai!"). This is permanently logged in the system announcements database.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        
+        <div class="text-center mt-4 mb-5">
+            <p class="text-muted"><em>Mistribhai is built with Flask, Bootstrap, and powered by Google Gemini AI.</em></p>
+        </div>
+    </div>
+
+</body>
+</html>

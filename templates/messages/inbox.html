@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Messages – Mistribhai{% endblock %}
+{% block content %}
+
+<div class="dashboard-header fade-in-up">
+  <div>
+    <div class="dashboard-title" style="font-size:1.4rem;">
+      <i class="fa-solid fa-envelope me-2" style="font-size:.85em;"></i>Messages
+    </div>
+    <div class="dashboard-subtitle">Your conversations with service providers and finders</div>
+  </div>
+</div>
+
+<div class="card fade-in-up">
+  <div class="card-body">
+    {% if conversations %}
+    <div class="vstack gap-2">
+      {% for conv in conversations %}
+      {% set other = conv.provider_user if current_user.id == conv.finder_id else conv.finder_user %}
+      <a href="{{ url_for('messages.conversation', conv_id=conv.id) }}" class="conversation-item">
+        <div class="conv-avatar">{{ other.name[0].upper() }}</div>
+        <div class="flex-grow-1">
+          <div class="fw-bold" style="font-size:.95rem;">{{ other.name }}</div>
+          <div class="text-muted small">{{ other.role|capitalize }}</div>
+        </div>
+        {% if unread_map[conv.id] %}
+        <span class="unread-badge">{{ unread_map[conv.id] }} new</span>
+        {% endif %}
+        <div class="text-muted small">
+          <i class="fa-solid fa-chevron-right"></i>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+      <i class="fa-solid fa-comment-slash" style="font-size:3rem;color:var(--border-soft);"></i>
+      <p class="text-muted mt-3 mb-0">No conversations yet.<br>
+        Browse provider profiles and click <strong>Message</strong> to start a chat.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

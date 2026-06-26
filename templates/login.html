@@ -1,27 +1,78 @@
 {% extends 'base.html' %}
+{% block title %}Sign In – Mistribhai{% endblock %}
 {% block content %}
-  <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
-      <div class="card shadow-sm">
-        <div class="card-body p-4">
-          <h2 class="h4 mb-3">Login</h2>
-          <form method="post" class="vstack gap-3">
-            {{ form.hidden_tag() }}
-            <div>
-              <label class="form-label">{{ form.email.label.text }}</label>
-              {{ form.email(class_='form-control', placeholder='you@example.com') }}
+
+<div class="row justify-content-center fade-in-up">
+  <div class="col-md-6 col-lg-5">
+
+    <!-- Brand mark -->
+    <div class="text-center mb-4">
+      <div style="font-size:2.5rem;font-weight:900;background:var(--se-gradient);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-1px;">
+        <i class="fa-solid fa-bolt-lightning me-1" style="font-size:.75em;"></i>Mistribhai
+      </div>
+      <p class="text-muted small mt-1">AI-Powered Smart Service Finder</p>
+    </div>
+
+    <div class="card">
+      <div class="card-body" style="padding:2rem;">
+        <h1 class="h4 fw-bold mb-1" style="letter-spacing:-.3px;">Welcome back</h1>
+        <p class="text-muted small mb-4">Sign in to continue to your dashboard</p>
+
+        <form method="post" class="vstack gap-3" id="login-form">
+          {{ form.hidden_tag() }}
+
+          <div>
+            <label class="form-label" for="email">
+              <i class="fa-solid fa-envelope me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+              {{ form.email.label.text }}
+            </label>
+            {{ form.email(class_='form-control', placeholder='you@example.com', id='email') }}
+          </div>
+
+          <div>
+            <label class="form-label" for="password">
+              <i class="fa-solid fa-lock me-1" style="color:var(--se-purple);font-size:.8em;"></i>
+              {{ form.password.label.text }}
+            </label>
+            <div class="position-relative">
+              {{ form.password(class_='form-control', placeholder='••••••••', id='password') }}
+              <button type="button" id="toggle-pw"
+                style="position:absolute;right:12px;top:50%;transform:translateY(-50%);border:none;background:none;color:var(--text-muted);cursor:pointer;padding:0;">
+                <i class="fa-solid fa-eye" id="pw-icon"></i>
+              </button>
             </div>
-            <div>
-              <label class="form-label">{{ form.password.label.text }}</label>
-              {{ form.password(class_='form-control', placeholder='••••••••') }}
-            </div>
-            <div class="d-grid">
-              {{ form.submit(class_='btn btn-primary') }}
-            </div>
-          </form>
-          <p class="mt-3 mb-0 text-muted">New? <a href="{{ url_for('register') }}">Create an account</a></p>
-        </div>
+          </div>
+
+          <div class="d-grid mt-1">
+            {{ form.submit(class_='btn btn-primary btn-lg', value='Sign In') }}
+          </div>
+        </form>
+
+        <hr class="my-3" style="border-color:var(--border-soft);">
+
+        <p class="text-center text-muted small mb-0">
+          Don't have an account?
+          <a href="{{ url_for('auth.register') }}" class="fw-bold" style="color:var(--se-purple);">Create one free</a>
+        </p>
       </div>
     </div>
+
   </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const btn = document.getElementById('toggle-pw');
+  const pw  = document.getElementById('password');
+  const ico = document.getElementById('pw-icon');
+  btn.addEventListener('click', () => {
+    if (pw.type === 'password') {
+      pw.type = 'text'; ico.className = 'fa-solid fa-eye-slash';
+    } else {
+      pw.type = 'password'; ico.className = 'fa-solid fa-eye';
+    }
+  });
+</script>
 {% endblock %}
