@@ -45,7 +45,8 @@ def create_app(config_name: str | None = None) -> Flask:
     )
     app.config.from_object(config_map[config_name])
 
-    # ── Create upload dirs ────────────────────────────────────────────────────
+    # ── Create upload dirs & instance dir ─────────────────────────────────────
+    os.makedirs(app.instance_path, exist_ok=True)
     for sub in ('profiles', 'covers', 'portfolio'):
         os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], sub), exist_ok=True)
 
